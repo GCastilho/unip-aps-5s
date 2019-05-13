@@ -1,5 +1,27 @@
+import java.io.*;
+import java.net.InetSocketAddress;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+import com.sun.net.httpserver.Headers;
+
 public class Server {
-	public static void main(String args[]) {
-		System.out.println("Hello World!\nThis is the server's main class");
+
+	public static void main(String[] args) throws Exception {
+		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+		server.createContext("/", new RootHandler());
+		server.setExecutor(null); // creates a default executor
+		server.start();
+		System.out.println("Server is up and running on port 8000");
 	}
-}
+
+	static class RootHandler implements HttpHandler {
+		public void handle(HttpExchange t) throws IOException {
+			String response = "Hello World";
+			t.sendResponseHeaders(200, response.length());
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+		}
+	}
