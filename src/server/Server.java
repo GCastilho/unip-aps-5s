@@ -18,10 +18,24 @@ public class Server {
 
 	static class RootHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
-			String response = "Hello World";
-			t.sendResponseHeaders(200, response.length());
-			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
-			os.close();
+			if (t.getRequestMethod().equals("GET")) {
+				File root = new File(new File(".").getCanonicalPath() + "/src/server/web");
+				File file = new File(root + "/index.html").getCanonicalFile();
+				t.sendResponseHeaders(200, 0);
+				OutputStream os = t.getResponseBody();
+				FileInputStream fs = new FileInputStream(file);
+				final byte[] buffer = new byte[0x10000];
+				int count = 0;
+				while ((count = fs.read(buffer)) >= 0) {
+					os.write(buffer,0,count);
+				}
+				fs.close();
+				os.close();
+				String response = "Hello POST";
+				t.sendResponseHeaders(200, response.length());
+				OutputStream os = t.getResponseBody();
+				os.write(response.getBytes());
+				os.close();
+			}
 		}
 	}
