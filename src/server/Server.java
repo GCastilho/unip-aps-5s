@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -78,15 +79,21 @@ public class Server {
 			{
 				Headers header = t.getRequestHeaders();
 				List<String> cookies = header.get("Cookie");
-				for (String cookieString : cookies) {
-					String[] tokens = cookieString.split("\\s*;\\s*");
-					for (String token : tokens) {
-						if (token.startsWith("username") && token.charAt("username".length()) == '=') {
-							cookie[0] = token.substring("username".length() + 1);
-						} else if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
-							cookie[1] = token.substring("sessionID".length() + 1);
+				if (cookies != null) {
+					for (String cookieString : cookies) {
+						String[] tokens = cookieString.split("\\s*;\\s*");
+						for (String token : tokens) {
+							if (token.startsWith("username") && token.charAt("username".length()) == '=') {
+								cookie[0] = token.substring("username".length() + 1);
+							} else if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
+								cookie[1] = token.substring("sessionID".length() + 1);
+							}
 						}
 					}
+				} else {
+					t.getResponseHeaders().set("Location", "/");
+					t.sendResponseHeaders(303, -1);
+					return;
 				}
 			}
 			System.out.println("username: "+cookie[0]+"\nsessionID: "+cookie[1]);
