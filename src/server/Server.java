@@ -60,11 +60,11 @@ public class Server {
 				//call validadepassword with username and password
 				//call getUserCookie with username and password
 				Headers headers = t.getResponseHeaders();
-				headers.set("Set-Cookie", String.format("%s=%s; path=/apps", "username", username));
-				headers.add("Set-Cookie", String.format("%s=%s; path=/apps", "sessionID", password)); //temporariamente usando password
+				headers.set("Set-Cookie", String.format("%s=%s; path=/app", "username", username));
+				headers.add("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", password)); //temporariamente usando password
 				headers.set("Location", "/app");
 
-				t.sendResponseHeaders(303, 0);
+				t.sendResponseHeaders(303, -1);
 				OutputStream os = t.getResponseBody();
 				os.close();
 			}
@@ -73,6 +73,11 @@ public class Server {
 
 	static class AppHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
+			String[] cookie = new String[2];
+			cookie[0] = getCookie(t, "username");
+			cookie[1] = getCookie(t, "sessionID");
+			System.out.println("username: "+cookie[0]+"\nsessionID: "+cookie[1]);
+
 			String response = "Hello App";
 			t.sendResponseHeaders(200, response.length());
 			OutputStream os = t.getResponseBody();
@@ -83,4 +88,21 @@ public class Server {
 
 	}
 
+	private static String getCookie(HttpExchange r, String name) {
+		Headers headers = r.getRequestHeaders();
+		if (headers != null) {
+			List<String> cookies = headers.get("Cookie");
+			if (cookies != null) {
+				for (String cookieString : cookies) {
+					String[] tokens = cookieString.split("\\s*;\\s*");
+					for (String token : tokens) {
+						if (token.startsWith(name) && token.charAt(name.length()) == '=') {
+							return token.substring(name.length() + 1);
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
 }
