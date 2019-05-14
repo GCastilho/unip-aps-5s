@@ -1,15 +1,29 @@
-let cor = () => {
-    document.getElementsByClassName('.main-section').style.backgroundColor = "red"
+$('.left-section, .message').mCustomScrollbar({
+    scrollInertia: 85
+});
+
+let updateScroll = () => {
+    var element = document.getElementsByClassName("message");
+    element.scrollTop = element.scrollHeight;
 };
 
-$(() => {
-    $('button').click(() => {
-        $('.main-section').css('backgroundColor', 'blue')
+var historic = () => {
+    $('.chat').append("<li class=\"msg-left\">" +
+        "                        <div class=\"msg-left-sub\">" +
+        "                            <img src=\"./../img/man03.png\">" +
+        "                            <div class=\"msg-desc\">" +
+        "                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod" +
+        "                                tempor incididunt ut labore et dolore magna aliqua." +
+        "                            </div>" +
+        "                            <small>05:01 am</small>" +
+        "                        </div>" +
+        "                    </li>")
+    updateScroll();
+    $('.message').mCustomScrollbar("scrollTo", "bottom",{
+        scrollInertia: 0,
+
     });
-    $('.btn-send').click(() => {
-        $('.main-section').css('backgroundColor', 'red')
-    })
-});
+};
 
 $(() => {
     $('.btn-send').click(() => {
@@ -24,5 +38,11 @@ $(() => {
                 "                        </div>" +
                 "                    </li>");
         }
-    })
+        historic();
+        updateScroll();
+        $('.message').mCustomScrollbar("scrollTo", "bottom",{
+            scrollInertia: 0,
+
+        });
+    });
 });
