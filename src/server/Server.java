@@ -11,6 +11,7 @@ public class Server {
 	public static void main(String[] args) throws Exception {
 		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
 		server.createContext("/", new RootHandler());
+		server.createContext("/app", new AppHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
 		System.out.println("Server is up and running on port 8000");
@@ -58,17 +59,28 @@ public class Server {
 				}
 				//call validadepassword with username and password
 				//call getUserCookie with username and password
+				Headers headers = t.getResponseHeaders();
+				headers.set("Set-Cookie", String.format("%s=%s; path=/apps", "username", username));
+				headers.add("Set-Cookie", String.format("%s=%s; path=/apps", "sessionID", password)); //temporariamente usando password
+				headers.set("Location", "/app");
 
-				System.out.println(username);
-				System.out.println(password);
-
-				String response = "Hello POST";
-				t.sendResponseHeaders(200, response.length());
+				t.sendResponseHeaders(303, 0);
 				OutputStream os = t.getResponseBody();
-				os.write(response.getBytes());
 				os.close();
 			}
 		}
+	}
+
+	static class AppHandler implements HttpHandler {
+		public void handle(HttpExchange t) throws IOException {
+			String response = "Hello App";
+			t.sendResponseHeaders(200, response.length());
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+		}
+	}
+
 	}
 
 }
