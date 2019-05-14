@@ -31,6 +31,37 @@ public class Server {
 				}
 				fs.close();
 				os.close();
+			} else if (t.getRequestMethod().equals("POST")) {
+				String username = null;
+				String password = null;
+				{
+					String query;
+					{
+						InputStreamReader is =  new InputStreamReader(t.getRequestBody(),"utf-8");
+						BufferedReader br = new BufferedReader(is);
+						StringBuilder buf = new StringBuilder(512);
+						int b;
+						while ((b = br.read()) != -1) {
+							buf.append((char) b);
+						}
+						query = buf.toString();
+					}
+					String[] array = query.split("&");
+					for (String str : array) {
+						String[] pair = str.split("=");
+						if (pair[0].equals("username")) {
+							username = pair[1];
+						} else if (pair[0].equals("password")) {
+							password = pair[1];
+						}
+					}
+				}
+				//call validadepassword with username and password
+				//call getUserCookie with username and password
+
+				System.out.println(username);
+				System.out.println(password);
+
 				String response = "Hello POST";
 				t.sendResponseHeaders(200, response.length());
 				OutputStream os = t.getResponseBody();
@@ -39,3 +70,5 @@ public class Server {
 			}
 		}
 	}
+
+}
