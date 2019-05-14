@@ -1,3 +1,5 @@
+package login;
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.sql.*;
@@ -6,7 +8,7 @@ import java.util.Date;
 public class Login {
 
 	public static void main(String[] args) {
-		if (login("gabriel","FA585D89C851DD338A70DCF535AA2A92FEE7836DD6AFF1226583E88E0996293F16BC009C652826E0FC5C706695A03CDDCE372F139EFF4D13959DA6F1F5D3EABE")){
+		if (validCredentiais("gabriel","FA585D89C851DD338A70DCF535AA2A92FEE7836DD6AFF1226583E88E0996293F16BC009C652826E0FC5C706695A03CDDCE372F139EFF4D13959DA6F1F5D3EABE")){
 			System.out.print("logado");
 		}else{
 			System.out.print("erro");
@@ -14,10 +16,10 @@ public class Login {
 
 	}
 
-	public static boolean login(String user, String password){
+	public static boolean validCredentiais(String user, String password){
 		password = getSHA512(password);
 		String query = "select id from login_data where name = '"+user+"' and password_enc ='"+password+"'";
-		Connection con = ConexaoMySQL.getConexaoMySQL();   
+		Connection con = DatabaseConnection.getConexaoMySQL();
 		try{
 			Statement stmt = con.createStatement();
 			ResultSet rs = stmt.executeQuery(query);
@@ -37,7 +39,7 @@ public class Login {
 	}
 	
 	public static void addCookie(String nome,String password){
-		Connection con = ConexaoMySQL.getConexaoMySQL();
+		Connection con = DatabaseConnection.getConexaoMySQL();
 
 		Date date= new Date();
 		long time = date.getTime();

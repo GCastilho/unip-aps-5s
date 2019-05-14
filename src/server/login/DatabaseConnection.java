@@ -1,11 +1,13 @@
+package login;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConexaoMySQL {
+public class DatabaseConnection {
 	public static String status = "not conected";
 
-	public ConexaoMySQL() {}
+	public DatabaseConnection() {}
 
 	public static java.sql.Connection getConexaoMySQL() {
 
@@ -60,7 +62,7 @@ public class ConexaoMySQL {
 
 		try {
 
-			ConexaoMySQL.getConexaoMySQL().close();
+			DatabaseConnection.getConexaoMySQL().close();
 
 			return true;
 
@@ -74,6 +76,6 @@ public class ConexaoMySQL {
 
 		FecharConexao();
 
-		return ConexaoMySQL.getConexaoMySQL();
+		return DatabaseConnection.getConexaoMySQL();
 	}
 }
