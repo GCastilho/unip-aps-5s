@@ -73,9 +73,22 @@ public class Server {
 
 	static class AppHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
+			// Get username and sessionID cookies
 			String[] cookie = new String[2];
-			cookie[0] = getCookie(t, "username");
-			cookie[1] = getCookie(t, "sessionID");
+			{
+				Headers header = t.getRequestHeaders();
+				List<String> cookies = header.get("Cookie");
+				for (String cookieString : cookies) {
+					String[] tokens = cookieString.split("\\s*;\\s*");
+					for (String token : tokens) {
+						if (token.startsWith("username") && token.charAt("username".length()) == '=') {
+							cookie[0] = token.substring("username".length() + 1);
+						} else if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
+							cookie[1] = token.substring("sessionID".length() + 1);
+						}
+					}
+				}
+			}
 			System.out.println("username: "+cookie[0]+"\nsessionID: "+cookie[1]);
 
 			String response = "Hello App";
@@ -84,25 +97,5 @@ public class Server {
 			os.write(response.getBytes());
 			os.close();
 		}
-	}
-
-	}
-
-	private static String getCookie(HttpExchange r, String name) {
-		Headers headers = r.getRequestHeaders();
-		if (headers != null) {
-			List<String> cookies = headers.get("Cookie");
-			if (cookies != null) {
-				for (String cookieString : cookies) {
-					String[] tokens = cookieString.split("\\s*;\\s*");
-					for (String token : tokens) {
-						if (token.startsWith(name) && token.charAt(name.length()) == '=') {
-							return token.substring(name.length() + 1);
-						}
-					}
-				}
-			}
-		}
-		return null;
 	}
 }
