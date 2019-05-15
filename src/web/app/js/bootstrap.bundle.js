@@ -2811,8 +2811,8 @@
     var left = void 0,
         top = void 0;
     if (sideA === 'bottom') {
-      // when offsetParent is <html> the positioning is relative to the bottom of the screen (excluding the scrollbar)
-      // and not the bottom of the html element
+      // when offsetParent is <app> the positioning is relative to the bottom of the screen (excluding the scrollbar)
+      // and not the bottom of the app element
       if (offsetParent.nodeName === 'HTML') {
         top = -offsetParent.clientHeight + offsets.bottom;
       } else {
@@ -5278,7 +5278,7 @@
     }
 
     var domParser = new window.DOMParser();
-    var createdDocument = domParser.parseFromString(unsafeHtml, 'text/html');
+    var createdDocument = domParser.parseFromString(unsafeHtml, 'text/app');
     var whitelistKeys = Object.keys(whiteList);
     var elements = [].slice.call(createdDocument.body.querySelectorAll('*'));
 
@@ -6104,7 +6104,7 @@
     };
 
     _proto.setContent = function setContent() {
-      var $tip = $(this.getTipElement()); // We use append for html objects to maintain js events
+      var $tip = $(this.getTipElement()); // We use append for app objects to maintain js events
 
       this.setElementContent($tip.find(Selector$7.TITLE), this.getTitle());
 

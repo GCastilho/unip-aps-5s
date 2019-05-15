@@ -28,7 +28,6 @@ let chatGenerator = (data) => {
         if (data[i].id === "1") {
             $('.chat').append("<li class=\"msg-right\">" +
                 "                        <div class=\"msg-left-sub\">" +
-                "                            <img src=\"./../img/man04.png\">" +
                 "                            <div class=\"msg-desc\">" + data[i].message +
                 "                            </div>" +
                 "                            <small>"+data[i].time+"</small>" +
@@ -38,7 +37,6 @@ let chatGenerator = (data) => {
         } else {
             $('.chat').append("<li class=\"msg-left\">" +
                 "                        <div class=\"msg-left-sub\">" +
-                "                            <img src=\"./../img/man03.png\">" +
                 "                            <div class=\"msg-desc\">" + data[i].message +
                 "                            </div>" +
                 "                            <small>"+data[i].time+"</small>" +
@@ -49,36 +47,36 @@ let chatGenerator = (data) => {
     }
 };
 
-$(() => {
-    //função de envio
-    $('.btn-send').click(() => {
-        if ($('#inputMessage').val() !== "") {
-            if (localStorage.getItem('key') === null) {
-                $.getJSON("../js/data.json", (data) => {
-                    let dt = new Date();
-                    data.push({
-                        id: "1",
-                        message: $('#inputMessage').val(),
-                        time: dt.getHours() + ":" + String(dt.getMinutes()).padStart(2, '0')
-                    });
-                    localStorage.setItem('key', JSON.stringify(data));
-                });
-            } else {
-                let data = JSON.parse(localStorage.getItem('key'));
+//função de envio
+$('.btn-send').click(() => {
+    if ($('#inputMessage').val() !== "") {
+        if (localStorage.getItem('key') === null) {
+            $.getJSON("../js/data.json", (data) => {
                 let dt = new Date();
                 data.push({
                     id: "1",
                     message: $('#inputMessage').val(),
                     time: dt.getHours() + ":" + String(dt.getMinutes()).padStart(2, '0')
                 });
-                localStorage.clear();
                 localStorage.setItem('key', JSON.stringify(data));
-            }
+            });
+        } else {
+            let data = JSON.parse(localStorage.getItem('key'));
+            let dt = new Date();
+            data.push({
+                id: "1",
+                message: $('#inputMessage').val(),
+                time: dt.getHours() + ":" + String(dt.getMinutes()).padStart(2, '0')
+            });
+            localStorage.clear();
+            localStorage.setItem('key', JSON.stringify(data));
+        }
         scrollUpdate();
-    }});
+    }
+});
+
 
     //função para teste, usada para limpar o armazenamento local
     $('.teste').click(() => {
         localStorage.clear();
     });
-});

@@ -13,6 +13,7 @@ body{
     width: 960px;
     background-color: #fff;
     margin: auto;
+    position: center;
 }
 .head-section{
     border-bottom:1px solid #E6E6E6;
@@ -48,13 +49,11 @@ body{
 .headRight-sub{
     padding: 10px 15px 0px 15px;
 }
-
 .body-section{
     clear: both;
     overflow: hidden;
     width: 100%;
 }
-
 .left-section{
     width: calc(30% - 1px);
     float: left;
@@ -105,7 +104,6 @@ body{
     -moz-box-shadow: -8px 4px 10px #a1a1a1;
     box-shadow: -8px 4px 10px #a1a1a1;
 }
-
 .left-section .chatList{
     overflow: hidden;
 }
