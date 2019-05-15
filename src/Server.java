@@ -111,7 +111,7 @@ public class Server {
 
 	private static void sendHtmlFile(HttpExchange t, String path) {
 		try {
-			File root = new File(new File(".").getCanonicalPath() + "/src/server/web");
+			File root = new File(new File(".").getCanonicalPath() + "/src/web");
 			File file = new File(root + path).getCanonicalFile();
 			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
 
