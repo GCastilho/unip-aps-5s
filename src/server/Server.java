@@ -61,7 +61,7 @@ public class Server {
 					}
 				}
 				if (Login.validCredentiais(username, password)) {
-					String sessionID = Login.addCookie(username, password);
+					String sessionID = Login.makeCookie(username, password);
 					if (sessionID != null) {
 						Headers headers = t.getResponseHeaders();
 						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "username", username));

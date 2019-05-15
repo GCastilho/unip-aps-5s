@@ -24,7 +24,7 @@ public class Login {
 		}
 	}
 	
-	public static String addCookie(String user,String password){
+	public static String makeCookie(String user, String password){
 		Connection con = DatabaseConnection.getConexaoMySQL();
 
 		Date date = new Date();
@@ -48,6 +48,22 @@ public class Login {
 		} catch(SQLException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	public static boolean validCookie(String user, String sessionId){
+		String query = "select count(id) from cookie where user_name = '"+user+"' and sessionId ='"+sessionId+"'";
+		Connection con = DatabaseConnection.getConexaoMySQL();
+		try {
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(query);
+			int count = 0;
+			while (rs.next()) {
+				count = rs.getInt("count(id)");
+			}
+			return count == 1;
+		} catch(SQLException e){
+			e.printStackTrace();
+			return false;
 		}
 	}
 

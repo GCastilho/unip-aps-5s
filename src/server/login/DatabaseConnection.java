@@ -16,7 +16,7 @@ public class DatabaseConnection {
 	try {
 // Carregando o JDBC Driver padrão
 
-			String driverName = "com.mysql.jdbc.Driver";
+			String driverName = "com.mysql.cj.jdbc.Driver";
 			Class.forName(driverName);
 // Configurando a nossa conexão com um banco de dados//
 
