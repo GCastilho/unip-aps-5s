@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.Date;
 
 public class Login {
-	public static boolean validCredentiais(String user, String password){
+	public static boolean validCredentials(String user, String password){
 		password = getSHA512(password);
 		String query = "select count(id) from login_data where name = '"+user+"' and password_enc ='"+password+"'";
 		Connection con = DatabaseConnection.getConexaoMySQL();

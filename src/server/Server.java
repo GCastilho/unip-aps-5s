@@ -23,18 +23,7 @@ public class Server {
 	static class RootHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
 			if (t.getRequestMethod().equals("GET")) {
-				File root = new File(new File(".").getCanonicalPath() + "/src/server/web");
-				File file = new File(root + "/index.html").getCanonicalFile();
-				t.sendResponseHeaders(200, 0);
-				OutputStream os = t.getResponseBody();
-				FileInputStream fs = new FileInputStream(file);
-				final byte[] buffer = new byte[0x10000];
-				int count = 0;
-				while ((count = fs.read(buffer)) >= 0) {
-					os.write(buffer,0,count);
-				}
-				fs.close();
-				os.close();
+				sendHtmlFile(t, "/index.html");
 			} else if (t.getRequestMethod().equals("POST")) {
 				String username = null;
 				String password = null;
@@ -60,7 +49,7 @@ public class Server {
 						}
 					}
 				}
-				if (Login.validCredentiais(username, password)) {
+				if (Login.validCredentials(username, password)) {
 					String sessionID = Login.makeCookie(username, password);
 					if (sessionID != null) {
 						Headers headers = t.getResponseHeaders();
@@ -111,10 +100,21 @@ public class Server {
 					return;
 				}
 			}
-			System.out.println("username: "+cookie[0]+"\nsessionID: "+cookie[1]);
-			//verifica se o cookie+senha é válido
+			if (Login.validCookie(cookie[0], cookie[1])) {
+				sendHtmlFile(t, "/app/app.html");
+			} else {
+				t.getResponseHeaders().set("Location", "/");
+				t.sendResponseHeaders(303, -1);
+			}
+		}
+	}
+
+	private static void sendHtmlFile(HttpExchange t, String path) {
+		try {
 			File root = new File(new File(".").getCanonicalPath() + "/src/server/web");
-			File file = new File(root + "/app/app.html").getCanonicalFile();
+			File file = new File(root + path).getCanonicalFile();
+			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
+
 			t.sendResponseHeaders(200, 0);
 			OutputStream os = t.getResponseBody();
 			FileInputStream fs = new FileInputStream(file);
@@ -125,7 +125,19 @@ public class Server {
 			}
 			fs.close();
 			os.close();
-			//se for inválido redireciona pra home
+		} catch (IOException e) {
+			System.out.println("Error: " + e.getMessage());
+			try {
+				String response = "500 Internal Server Error";
+				t.sendResponseHeaders(500, response.length());
+				OutputStream os = t.getResponseBody();
+				os.write(response.getBytes());
+				os.close();
+			} catch (IOException ex) {
+				e.printStackTrace();
+			}
+
 		}
+
 	}
 }
