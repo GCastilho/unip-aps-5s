@@ -7,6 +7,8 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 
+import login.Login;
+
 public class Server {
 
 	public static void main(String[] args) throws Exception {
@@ -58,16 +60,29 @@ public class Server {
 						}
 					}
 				}
-				//call validadepassword with username and password
-				//call getUserCookie with username and password
-				Headers headers = t.getResponseHeaders();
-				headers.set("Set-Cookie", String.format("%s=%s; path=/app", "username", username));
-				headers.add("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", password)); //temporariamente usando password
-				headers.set("Location", "/app");
+				if (Login.validCredentiais(username, password)) {
+					String sessionID = Login.addCookie(username, password);
+					if (sessionID != null) {
+						Headers headers = t.getResponseHeaders();
+						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "username", username));
+						headers.add("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
+						headers.set("Location", "/app");
 
-				t.sendResponseHeaders(303, -1);
-				OutputStream os = t.getResponseBody();
-				os.close();
+						t.sendResponseHeaders(303, -1);
+					} else {
+						String response = "500 Internal Server Error";
+						t.sendResponseHeaders(500, response.length());
+						OutputStream os = t.getResponseBody();
+						os.write(response.getBytes());
+						os.close();
+					}
+				} else {
+					String response = "401 Falha de autenticação";
+					t.sendResponseHeaders(401, response.length());
+					OutputStream os = t.getResponseBody();
+					os.write(response.getBytes());
+					os.close();
+				}
 			}
 		}
 	}

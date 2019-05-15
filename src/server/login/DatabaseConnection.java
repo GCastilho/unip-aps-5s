@@ -21,10 +21,10 @@ public class DatabaseConnection {
 // Configurando a nossa conexão com um banco de dados//
 
 			String serverName = "127.0.0.1:3306";    //caminho do servidor do BD
-			String mydatabase = "login"; //nome do seu banco de dados
+			String mydatabase = "unip_aps_5s"; //nome do seu banco de dados
 			String url = "jdbc:mysql://" + serverName + "/"+mydatabase+"?useTimezone=true&serverTimezone=UTC";
 			String username = "root";        //nome de um usuário de seu BD
-			String password = "258o258O";      //sua senha de acesso
+			String password = "";      //sua senha de acesso
 			
 			connection = DriverManager.getConnection(url, username, password);
 			if (connection != null) {
