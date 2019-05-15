@@ -77,7 +77,7 @@ public class Server {
 						os.close();
 					}
 				} else {
-					String response = "401 Falha de autenticação";
+					String response = "401 Unauthorized";
 					t.sendResponseHeaders(401, response.length());
 					OutputStream os = t.getResponseBody();
 					os.write(response.getBytes());
@@ -112,12 +112,20 @@ public class Server {
 				}
 			}
 			System.out.println("username: "+cookie[0]+"\nsessionID: "+cookie[1]);
-
-			String response = "Hello App";
-			t.sendResponseHeaders(200, response.length());
+			//verifica se o cookie+senha é válido
+			File root = new File(new File(".").getCanonicalPath() + "/src/server/web");
+			File file = new File(root + "/app/app.html").getCanonicalFile();
+			t.sendResponseHeaders(200, 0);
 			OutputStream os = t.getResponseBody();
-			os.write(response.getBytes());
+			FileInputStream fs = new FileInputStream(file);
+			final byte[] buffer = new byte[0x10000];
+			int count = 0;
+			while ((count = fs.read(buffer)) >= 0) {
+				os.write(buffer,0,count);
+			}
+			fs.close();
 			os.close();
+			//se for inválido redireciona pra home
 		}
 	}
 }
