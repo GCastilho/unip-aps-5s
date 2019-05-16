@@ -6,20 +6,14 @@ import java.sql.*;
 import java.util.Date;
 
 public class Login {
-	public static boolean validCredentials(String username, String password){
+	public static boolean validCredentials(String username, String password) throws SQLException {
 		password = getSHA512(password);
 		String query = "select id from credential where username = '"+username+"' and password_hash ='"+password+"'";
 		Connection con = DatabaseConnection.getConnection();
 
-		try {
-			//uses the statatement object that returned from createStatement() to use the executequery() method
-			//the resultset returned execute next() to verify if the first row of the select is empty
-			return con.createStatement().executeQuery(query).next();
-
-		}catch(SQLException e){
-				e.printStackTrace();
-				return false;
-		}
+		//uses the statement object that returned from createStatement() to use the executequery() method
+		//the resultset returned execute next() to verify if the first row of the select is empty
+		return con.createStatement().executeQuery(query).next();
 	}
 
 	public static boolean validCookie(String sessionId){

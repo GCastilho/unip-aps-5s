@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.sql.SQLException;
 import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -7,6 +8,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 
+import http.HttpErrors;
 import login.Login;
 
 public class Server {
@@ -49,27 +51,25 @@ public class Server {
 						}
 					}
 				}
-				if (Login.validCredentials(username, password)) {
-					String sessionID = Login.makeCookie(username, password);
-					if (sessionID != null) {
-						Headers headers = t.getResponseHeaders();
-						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
-						headers.set("Location", "/app");
+				try {
+					if (Login.validCredentials(username, password)) {
+						String sessionID = Login.makeCookie(username, password);
+						if (sessionID != null) {
+							Headers headers = t.getResponseHeaders();
+							headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
+							headers.set("Location", "/app");
 
-						t.sendResponseHeaders(303, -1);
+							t.sendResponseHeaders(303, -1);
+						} else {
+							HttpErrors.send500(t);
+						}
 					} else {
-						String response = "500 Internal Server Error";
-						t.sendResponseHeaders(500, response.length());
-						OutputStream os = t.getResponseBody();
-						os.write(response.getBytes());
-						os.close();
+						HttpErrors.send401(t);
 					}
-				} else {
-					String response = "401 Unauthorized";
-					t.sendResponseHeaders(401, response.length());
-					OutputStream os = t.getResponseBody();
-					os.write(response.getBytes());
-					os.close();
+				} catch (SQLException e) {
+					System.out.println("Error: "+e.getMessage());
+					e.printStackTrace();
+					HttpErrors.send500(t);
 				}
 			}
 		}
@@ -124,16 +124,7 @@ public class Server {
 			os.close();
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());
-			try {
-				String response = "500 Internal Server Error";
-				t.sendResponseHeaders(500, response.length());
-				OutputStream os = t.getResponseBody();
-				os.write(response.getBytes());
-				os.close();
-			} catch (IOException ex) {
-				e.printStackTrace();
-			}
-
+			HttpErrors.send500(t);
 		}
 
 	}
