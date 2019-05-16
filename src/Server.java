@@ -10,6 +10,7 @@ import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 
 import http.HttpErrors;
+import http.HttpFile;
 import login.Login;
 
 public class Server {
@@ -24,16 +25,16 @@ public class Server {
 	}
 
 	static class RootHandler implements HttpHandler {
-		public void handle(HttpExchange t) throws IOException {
-			if (t.getRequestMethod().equals("GET")) {
-				sendHtmlFile(t, "/index.html");
-			} else if (t.getRequestMethod().equals("POST")) {
+		public void handle(HttpExchange httpExchange) throws IOException {
+			if (httpExchange.getRequestMethod().equals("GET")) {
+				HttpFile.sendHtml(httpExchange, "/index.html");
+			} else if (httpExchange.getRequestMethod().equals("POST")) {
 				String username = null;
 				String password = null;
 				{
 					String query;
 					{
-						InputStreamReader is =  new InputStreamReader(t.getRequestBody(), StandardCharsets.UTF_8);
+						InputStreamReader is =  new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
 						BufferedReader br = new BufferedReader(is);
 						StringBuilder buf = new StringBuilder(512);
 						int b;
@@ -56,32 +57,32 @@ public class Server {
 					if (Login.validCredentials(username, password)) {
 						String sessionID = Login.makeCookie(username, password);
 						if (sessionID != null) {
-							Headers headers = t.getResponseHeaders();
+							Headers headers = httpExchange.getResponseHeaders();
 							headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
 							headers.set("Location", "/app");
 
-							t.sendResponseHeaders(303, -1);
+							httpExchange.sendResponseHeaders(303, -1);
 						} else {
-							HttpErrors.send500(t);
+							HttpErrors.send500(httpExchange);
 						}
 					} else {
-						HttpErrors.send401(t);
+						HttpErrors.send401(httpExchange);
 					}
 				} catch (SQLException e) {
 					System.out.println("Error: "+e.getMessage());
 					e.printStackTrace();
-					HttpErrors.send500(t);
+					HttpErrors.send500(httpExchange);
 				}
 			}
 		}
 	}
 
 	static class AppHandler implements HttpHandler {
-		public void handle(HttpExchange t) throws IOException {
+		public void handle(HttpExchange httpExchange) throws IOException {
 			// Get sessionID cookies
 			String sessionID = null;
 			{
-				Headers header = t.getRequestHeaders();
+				Headers header = httpExchange.getRequestHeaders();
 				List<String> cookies = header.get("Cookie");
 				if (cookies != null) {
 					for (String cookieString : cookies) {
@@ -93,85 +94,24 @@ public class Server {
 						}
 					}
 				} else {
-					t.getResponseHeaders().set("Location", "/");
-					t.sendResponseHeaders(303, -1);
+					httpExchange.getResponseHeaders().set("Location", "/");
+					httpExchange.sendResponseHeaders(303, -1);
 					return;
 				}
 			}
 			try {
 				if (Login.validCookie(sessionID)) {
-					if (t.getRequestURI().getPath().equals("/app")) {
-						sendHtmlFile(t, "/app/app.html");
+					if (httpExchange.getRequestURI().getPath().equals("/app")) {
+						HttpFile.sendHtml(httpExchange, "/app/app.html");
 					} else {
-						sendRawFile(t, t.getRequestURI().getPath());
+						HttpFile.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
 					}
 				} else {
-					t.getResponseHeaders().set("Location", "/");
-					t.sendResponseHeaders(303, -1);
+					httpExchange.getResponseHeaders().set("Location", "/");
+					httpExchange.sendResponseHeaders(303, -1);
 				}
 			} catch (SQLException e) {
-				HttpErrors.send500(t);
-			}
-		}
-	}
-
-	private static void sendHtmlFile(HttpExchange t, String path) {
-		try {
-			File root = new File(new File(".").getCanonicalPath() + "/src/web");
-			File file = new File(root + path).getCanonicalFile();
-			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
-
-			sendFile(t, file);
-		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
-			try {
-				String response = "500 Internal Server Error";
-				t.sendResponseHeaders(500, response.length());
-				OutputStream os = t.getResponseBody();
-				os.write(response.getBytes());
-				os.close();
-			} catch (IOException ex) {
-				e.printStackTrace();
-			}
-
-		}
-	}
-
-	private static void sendRawFile(HttpExchange t, String path) {
-		try {
-			File root = new File(new File(".").getCanonicalPath() + "/src/web");
-			File file = new File(root + path).getCanonicalFile();
-
-			sendFile(t, file);
-		} catch (IOException e) {
-			System.out.print("Error while trying to send file to user: ");
-			System.out.println(e.getMessage());
-		}
-	}
-
-	private static void sendFile(HttpExchange t, File file) {
-		try {
-			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
-
-			t.sendResponseHeaders(200, 0);
-			OutputStream os = t.getResponseBody();
-			FileInputStream fs = new FileInputStream(file);
-			final byte[] buffer = new byte[0x10000];
-			int count;
-			while ((count = fs.read(buffer)) >= 0) {
-				os.write(buffer,0,count);
-			}
-			fs.close();
-			os.close();
-		} catch (IOException e) {
-			try {
-				String response = "404 Not Found";
-				t.sendResponseHeaders(404, response.length());
-				OutputStream os = t.getResponseBody();
-				os.write(response.getBytes());
-				os.close();
-			} catch (IOException ex) {
-				e.printStackTrace();
+				HttpErrors.send500(httpExchange);
 			}
 		}
 	}

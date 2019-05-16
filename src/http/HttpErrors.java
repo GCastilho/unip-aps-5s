@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class HttpErrors {
-	public static void send(HttpExchange httpExchange, String response) {
+	private static void send(HttpExchange httpExchange, String response) {
 		try {
 			httpExchange.sendResponseHeaders(401, response.length());
 			OutputStream os = httpExchange.getResponseBody();
