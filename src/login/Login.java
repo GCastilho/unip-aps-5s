@@ -22,7 +22,7 @@ public class Login {
 		}
 	}
 
-	public static boolean validCookie(String username,String sessionId){
+	public static boolean validCookie(String sessionId){
 		String query = "select timestamp from cookie where sessionId ='"+sessionId+"'";
 		Connection con = DatabaseConnection.getConnection();
 		try {
