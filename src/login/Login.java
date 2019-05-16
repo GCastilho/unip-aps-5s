@@ -1,6 +1,7 @@
 package login;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.*;
 import java.util.Date;
@@ -16,52 +17,47 @@ public class Login {
 		return con.createStatement().executeQuery(query).next();
 	}
 
-	public static boolean validCookie(String sessionId){
+	public static boolean validCookie(String sessionId) throws SQLException {
 		String query = "select timestamp from cookie where sessionId ='"+sessionId+"'";
 		Connection con = DatabaseConnection.getConnection();
-		try {
 
-			ResultSet rs = con.createStatement().executeQuery(query);
-			if(rs.next()){
-				//verify if cookie timestamp is bigger than 10 minutes(in miliseconds)
-				return rs.getLong(1)> new Date().getTime()-600000;
-			}
+		ResultSet rs = con.createStatement().executeQuery(query);
 
-		}catch(SQLException e){
-			e.printStackTrace();
-		}
-		return false;
+		//verify if cookie timestamp is bigger than 10 minutes(in miliseconds)
+		return rs.next() ? rs.getLong(1) > new Date().getTime()-600000 : false;
 	}
 
-	public static String makeCookie(String user, String password){
+	public static String updateCookie(String username ,String sessionId) throws SQLException {
+		String query = "delete from cookie where sessionId ='"+sessionId+"'";
+		DatabaseConnection.getConnection().createStatement().executeQuery(query);
+
+		return makeCookie(username, sessionId);
+	}
+
+	public static String makeCookie(String user, String password) throws SQLException {
 		Connection con = DatabaseConnection.getConnection();
 		long time = new Date().getTime();
 
 		password =  getSHA512(password+user+time);
 
-		String query = " insert into cookie (username,sessionID,timeStamp)"
+		String query = "insert into cookie (username,sessionID,timeStamp)"
 		+ " values (?,?,?)";
-		try {
-			PreparedStatement preparedStmt = con.prepareStatement(query);
-			preparedStmt.setString (1,user );
-			preparedStmt.setString (2,password);
-			preparedStmt.setLong (3,time);
 
-			preparedStmt.execute();
+		PreparedStatement preparedStmt = con.prepareStatement(query);
+		preparedStmt.setString(1,user );
+		preparedStmt.setString(2,password);
+		preparedStmt.setLong(3,time);
 
-			System.out.println("COOKIE adicionada com sucesso ao banco de dados");
-			return password;
-		} catch(SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
+		preparedStmt.execute();
+
+		return password;
 	}
 
-	private static String getSHA512(String input){
+	private static String getSHA512(String input) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-512");
 			digest.reset();
-			digest.update(input.getBytes("utf8"));
+			digest.update(input.getBytes(StandardCharsets.UTF_8));
 			return (String.format("%0128x", new BigInteger(1, digest.digest())));
 		} catch (Exception e) {
 			e.printStackTrace();

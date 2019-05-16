@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class Server {
 				{
 					String query;
 					{
-						InputStreamReader is =  new InputStreamReader(t.getRequestBody(),"utf-8");
+						InputStreamReader is =  new InputStreamReader(t.getRequestBody(), StandardCharsets.UTF_8);
 						BufferedReader br = new BufferedReader(is);
 						StringBuilder buf = new StringBuilder(512);
 						int b;
@@ -97,11 +98,15 @@ public class Server {
 					return;
 				}
 			}
-			if (Login.validCookie(sessionID)) {
-				sendHtmlFile(t, "/app/app.html");
-			} else {
-				t.getResponseHeaders().set("Location", "/");
-				t.sendResponseHeaders(303, -1);
+			try {
+				if (Login.validCookie(sessionID)) {
+					sendHtmlFile(t, "/app/app.html");
+				} else {
+					t.getResponseHeaders().set("Location", "/");
+					t.sendResponseHeaders(303, -1);
+				}
+			} catch (SQLException e) {
+				HttpErrors.send500(t);
 			}
 		}
 	}
@@ -116,7 +121,7 @@ public class Server {
 			OutputStream os = t.getResponseBody();
 			FileInputStream fs = new FileInputStream(file);
 			final byte[] buffer = new byte[0x10000];
-			int count = 0;
+			int count;
 			while ((count = fs.read(buffer)) >= 0) {
 				os.write(buffer,0,count);
 			}
