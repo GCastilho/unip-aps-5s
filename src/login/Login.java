@@ -8,7 +8,7 @@ import java.util.Date;
 public class Login {
 	public static boolean validCredentials(String user, String password){
 		password = getSHA512(password);
-		String query = "select count(id) from login_data where name = '"+user+"' and password_enc ='"+password+"'";
+		String query = "select count(id) from authentication where username = '"+user+"' and password_hash ='"+password+"'";
 		Connection con = DatabaseConnection.getConexaoMySQL();
 		try {
 			Statement stmt = con.createStatement();
@@ -33,7 +33,7 @@ public class Login {
 
 		password =  getSHA512(password+user+ts);
 
-		String query = " insert into cookie (user_name,sessionID,timeStamp)"
+		String query = " insert into cookie (username,sessionID,timestamp)"
 		+ " values (?,?,?)";
 		try {
 			PreparedStatement preparedStmt = con.prepareStatement(query);
@@ -51,7 +51,7 @@ public class Login {
 		}
 	}
 	public static boolean validCookie(String user, String sessionId){
-		String query = "select count(id) from cookie where user_name = '"+user+"' and sessionId ='"+sessionId+"'";
+		String query = "select count(id) from cookie where username = '"+user+"' and sessionId ='"+sessionId+"'";
 		Connection con = DatabaseConnection.getConexaoMySQL();
 		try {
 			Statement stmt = con.createStatement();
