@@ -23,7 +23,7 @@ public class Server {
 	static class RootHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
 			if (t.getRequestMethod().equals("GET")) {
-				sendHtmlFile(t, "/index.html");
+				sendFile(t, "/index.html");
 			} else if (t.getRequestMethod().equals("POST")) {
 				String username = null;
 				String password = null;
@@ -78,38 +78,43 @@ public class Server {
 
 	static class AppHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
-			// Get username and sessionID cookies
-			String[] cookie = new String[2];
-			{
-				Headers header = t.getRequestHeaders();
-				List<String> cookies = header.get("Cookie");
-				if (cookies != null) {
-					for (String cookieString : cookies) {
-						String[] tokens = cookieString.split("\\s*;\\s*");
-						for (String token : tokens) {
-							if (token.startsWith("username") && token.charAt("username".length()) == '=') {
-								cookie[0] = token.substring("username".length() + 1);
-							} else if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
-								cookie[1] = token.substring("sessionID".length() + 1);
+			if (t.getRequestURI().getPath().equals("/app")) {
+				// Get username and sessionID cookies
+				String[] cookie = new String[2];
+				{
+					Headers header = t.getRequestHeaders();
+					List<String> cookies = header.get("Cookie");
+					if (cookies != null) {
+						for (String cookieString : cookies) {
+							String[] tokens = cookieString.split("\\s*;\\s*");
+							for (String token : tokens) {
+								if (token.startsWith("username") && token.charAt("username".length()) == '=') {
+									cookie[0] = token.substring("username".length() + 1);
+								} else if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
+									cookie[1] = token.substring("sessionID".length() + 1);
+								}
 							}
 						}
+					} else {
+						t.getResponseHeaders().set("Location", "/");
+						t.sendResponseHeaders(303, -1);
+						return;
 					}
+				}
+				if (Login.validCookie(cookie[0], cookie[1])) {
+					sendFile(t, "/app/app.html");
 				} else {
 					t.getResponseHeaders().set("Location", "/");
 					t.sendResponseHeaders(303, -1);
-					return;
 				}
-			}
-			if (Login.validCookie(cookie[0], cookie[1])) {
-				sendHtmlFile(t, "/app/app.html");
 			} else {
-				t.getResponseHeaders().set("Location", "/");
-				t.sendResponseHeaders(303, -1);
+				sendFile(t, t.getRequestURI().getPath());
 			}
 		}
 	}
 
-	private static void sendHtmlFile(HttpExchange t, String path) {
+	private static void sendFile(HttpExchange t, String path) {
+		//TODO: Corrigir ataque de path relativo
 		try {
 			File root = new File(new File(".").getCanonicalPath() + "/src/web");
 			File file = new File(root + path).getCanonicalFile();
@@ -128,8 +133,8 @@ public class Server {
 		} catch (IOException e) {
 			System.out.println("Error: " + e.getMessage());
 			try {
-				String response = "500 Internal Server Error";
-				t.sendResponseHeaders(500, response.length());
+				String response = "404 Not Found";
+				t.sendResponseHeaders(404, response.length());
 				OutputStream os = t.getResponseBody();
 				os.write(response.getBytes());
 				os.close();
