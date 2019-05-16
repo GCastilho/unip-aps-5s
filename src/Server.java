@@ -78,7 +78,7 @@ public class Server {
 
 	static class AppHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
-			// Get username and sessionID cookies
+			// Get sessionID cookies
 			String sessionID = null;
 			{
 				Headers header = t.getRequestHeaders();
@@ -100,7 +100,11 @@ public class Server {
 			}
 			try {
 				if (Login.validCookie(sessionID)) {
-					sendHtmlFile(t, "/app/app.html");
+					if (t.getRequestURI().getPath().equals("/app")) {
+						sendHtmlFile(t, "/app/app.html");
+					} else {
+						sendRawFile(t, t.getRequestURI().getPath());
+					}
 				} else {
 					t.getResponseHeaders().set("Location", "/");
 					t.sendResponseHeaders(303, -1);
@@ -117,6 +121,38 @@ public class Server {
 			File file = new File(root + path).getCanonicalFile();
 			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
 
+			sendFile(t, file);
+		} catch (IOException e) {
+			System.out.println("Error: " + e.getMessage());
+			try {
+				String response = "500 Internal Server Error";
+				t.sendResponseHeaders(500, response.length());
+				OutputStream os = t.getResponseBody();
+				os.write(response.getBytes());
+				os.close();
+			} catch (IOException ex) {
+				e.printStackTrace();
+			}
+
+		}
+	}
+
+	private static void sendRawFile(HttpExchange t, String path) {
+		try {
+			File root = new File(new File(".").getCanonicalPath() + "/src/web");
+			File file = new File(root + path).getCanonicalFile();
+
+			sendFile(t, file);
+		} catch (IOException e) {
+			System.out.print("Error while trying to send file to user: ");
+			System.out.println(e.getMessage());
+		}
+	}
+
+	private static void sendFile(HttpExchange t, File file) {
+		try {
+			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
+
 			t.sendResponseHeaders(200, 0);
 			OutputStream os = t.getResponseBody();
 			FileInputStream fs = new FileInputStream(file);
@@ -128,9 +164,15 @@ public class Server {
 			fs.close();
 			os.close();
 		} catch (IOException e) {
-			System.out.println("Error: " + e.getMessage());
-			HttpErrors.send500(t);
+			try {
+				String response = "404 Not Found";
+				t.sendResponseHeaders(404, response.length());
+				OutputStream os = t.getResponseBody();
+				os.write(response.getBytes());
+				os.close();
+			} catch (IOException ex) {
+				e.printStackTrace();
+			}
 		}
-
 	}
 }

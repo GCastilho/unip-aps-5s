@@ -40,7 +40,7 @@ public class Login {
 
 		password =  getSHA512(password+user+time);
 
-		String query = "insert into cookie (username,sessionID,timeStamp)"
+		String query = "insert into cookie (username,sessionID,timestamp)"
 		+ " values (?,?,?)";
 
 		PreparedStatement preparedStmt = con.prepareStatement(query);
