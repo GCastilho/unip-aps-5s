@@ -53,8 +53,7 @@ public class Server {
 					String sessionID = Login.makeCookie(username, password);
 					if (sessionID != null) {
 						Headers headers = t.getResponseHeaders();
-						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "username", username));
-						headers.add("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
+						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
 						headers.set("Location", "/app");
 
 						t.sendResponseHeaders(303, -1);
@@ -79,7 +78,7 @@ public class Server {
 	static class AppHandler implements HttpHandler {
 		public void handle(HttpExchange t) throws IOException {
 			// Get username and sessionID cookies
-			String[] cookie = new String[2];
+			String sessionID = null;
 			{
 				Headers header = t.getRequestHeaders();
 				List<String> cookies = header.get("Cookie");
@@ -87,10 +86,8 @@ public class Server {
 					for (String cookieString : cookies) {
 						String[] tokens = cookieString.split("\\s*;\\s*");
 						for (String token : tokens) {
-							if (token.startsWith("username") && token.charAt("username".length()) == '=') {
-								cookie[0] = token.substring("username".length() + 1);
-							} else if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
-								cookie[1] = token.substring("sessionID".length() + 1);
+							if (token.startsWith("sessionID") && token.charAt("sessionID".length()) == '=') {
+								sessionID = token.substring("sessionID".length() + 1);
 							}
 						}
 					}
@@ -100,7 +97,7 @@ public class Server {
 					return;
 				}
 			}
-			if (Login.validCookie(cookie[0], cookie[1])) {
+			if (Login.validCookie(sessionID)) {
 				sendHtmlFile(t, "/app/app.html");
 			} else {
 				t.getResponseHeaders().set("Location", "/");
