@@ -1,77 +1,63 @@
 package login;
 
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.sql.*;
 import java.util.Date;
 
 public class Login {
-	public static boolean validCredentials(String user, String password){
+	public static boolean validCredentials(String username, String password) throws SQLException {
 		password = getSHA512(password);
-		String query = "select count(id) from authentication where username = '"+user+"' and password_hash ='"+password+"'";
-		Connection con = DatabaseConnection.getConexaoMySQL();
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			int count = 0;
-			while (rs.next()) {
-			count = rs.getInt("count(id)");
-			}
-			return count == 1;
-		} catch(SQLException e){
-			e.printStackTrace();
-			return false;
-		}
+		String query = "select id from credential where username = '"+username+"' and password_hash ='"+password+"'";
+		Connection con = DatabaseConnection.getConnection();
+
+		//uses the statement object that returned from createStatement() to use the executequery() method
+		//the resultset returned execute next() to verify if the first row of the select is empty
+		return con.createStatement().executeQuery(query).next();
 	}
-	
-	public static String makeCookie(String user, String password){
-		Connection con = DatabaseConnection.getConexaoMySQL();
 
-		Date date = new Date();
-		long time = date.getTime();
-		Timestamp ts = new Timestamp(time);
+	public static boolean validCookie(String sessionId) throws SQLException {
+		String query = "select timestamp from cookie where sessionId ='"+sessionId+"'";
+		Connection con = DatabaseConnection.getConnection();
 
-		password =  getSHA512(password+user+ts);
+		ResultSet rs = con.createStatement().executeQuery(query);
 
-		String query = " insert into cookie (username,sessionID,timestamp)"
+		//verify if cookie timestamp is bigger than 10 minutes(in miliseconds)
+		return rs.next() ? rs.getLong(1) > new Date().getTime()-600000 : false;
+	}
+
+	public static String updateCookie(String username ,String sessionId) throws SQLException {
+		String query = "delete from cookie where sessionId ='"+sessionId+"'";
+		DatabaseConnection.getConnection().createStatement().executeQuery(query);
+
+		return makeCookie(username, sessionId);
+	}
+
+	public static String makeCookie(String user, String password) throws SQLException {
+		Connection con = DatabaseConnection.getConnection();
+		long time = new Date().getTime();
+
+		password =  getSHA512(password+user+time);
+
+		String query = "insert into cookie (username,sessionID,timestamp)"
 		+ " values (?,?,?)";
-		try {
-			PreparedStatement preparedStmt = con.prepareStatement(query);
-			preparedStmt.setString (1,user );
-			preparedStmt.setString (2,password);
-			preparedStmt.setString (3,""+ts+"");
 
-			preparedStmt.execute();
+		PreparedStatement preparedStmt = con.prepareStatement(query);
+		preparedStmt.setString(1,user );
+		preparedStmt.setString(2,password);
+		preparedStmt.setLong(3,time);
 
-			System.out.println("sessao adicionada com sucesso ao banco de dados");
-			return password;
-		} catch(SQLException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	public static boolean validCookie(String user, String sessionId){
-		String query = "select count(id) from cookie where username = '"+user+"' and sessionId ='"+sessionId+"'";
-		Connection con = DatabaseConnection.getConexaoMySQL();
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			int count = 0;
-			while (rs.next()) {
-				count = rs.getInt("count(id)");
-			}
-			return count == 1;
-		} catch(SQLException e){
-			e.printStackTrace();
-			return false;
-		}
+		preparedStmt.execute();
+
+		return password;
 	}
 
-	private static String getSHA512(String input){
+	private static String getSHA512(String input) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-512");
 			digest.reset();
-			digest.update(input.getBytes("utf8"));
+			digest.update(input.getBytes(StandardCharsets.UTF_8));
 			return (String.format("%0128x", new BigInteger(1, digest.digest())));
 		} catch (Exception e) {
 			e.printStackTrace();
