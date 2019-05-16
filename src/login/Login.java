@@ -6,64 +6,60 @@ import java.sql.*;
 import java.util.Date;
 
 public class Login {
-	public static boolean validCredentials(String user, String password){
+	public static boolean validCredentials(String username, String password){
 		password = getSHA512(password);
-		String query = "select count(id) from login_data where name = '"+user+"' and password_enc ='"+password+"'";
-		Connection con = DatabaseConnection.getConexaoMySQL();
+		String query = "select id from credential where username = '"+username+"' and password_hash ='"+password+"'";
+		Connection con = DatabaseConnection.getConnection();
+
 		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			int count = 0;
-			while (rs.next()) {
-			count = rs.getInt("count(id)");
-			}
-			return count == 1;
-		} catch(SQLException e){
-			e.printStackTrace();
-			return false;
+			//uses the statatement object that returned from createStatement() to use the executequery() method
+			//the resultset returned execute next() to verify if the first row of the select is empty
+			return con.createStatement().executeQuery(query).next();
+
+		}catch(SQLException e){
+				e.printStackTrace();
+				return false;
 		}
 	}
-	
+
+	public static boolean validCookie(String username,String sessionId){
+		String query = "select timestamp from cookie where sessionId ='"+sessionId+"'";
+		Connection con = DatabaseConnection.getConnection();
+		try {
+
+			ResultSet rs = con.createStatement().executeQuery(query);
+			if(rs.next()){
+				//verify if cookie timestamp is bigger than 10 minutes(in miliseconds)
+				return rs.getLong(1)> new Date().getTime()-600000;
+			}
+
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public static String makeCookie(String user, String password){
-		Connection con = DatabaseConnection.getConexaoMySQL();
+		Connection con = DatabaseConnection.getConnection();
+		long time = new Date().getTime();
 
-		Date date = new Date();
-		long time = date.getTime();
-		Timestamp ts = new Timestamp(time);
+		password =  getSHA512(password+user+time);
 
-		password =  getSHA512(password+user+ts);
-
-		String query = " insert into cookie (user_name,sessionID,timeStamp)"
+		String query = " insert into cookie (username,sessionID,timeStamp)"
 		+ " values (?,?,?)";
 		try {
 			PreparedStatement preparedStmt = con.prepareStatement(query);
 			preparedStmt.setString (1,user );
 			preparedStmt.setString (2,password);
-			preparedStmt.setString (3,""+ts+"");
+			preparedStmt.setLong (3,time);
 
 			preparedStmt.execute();
 
-			System.out.println("sessao adicionada com sucesso ao banco de dados");
+			System.out.println("COOKIE adicionada com sucesso ao banco de dados");
 			return password;
 		} catch(SQLException e) {
 			e.printStackTrace();
 			return null;
-		}
-	}
-	public static boolean validCookie(String user, String sessionId){
-		String query = "select count(id) from cookie where user_name = '"+user+"' and sessionId ='"+sessionId+"'";
-		Connection con = DatabaseConnection.getConexaoMySQL();
-		try {
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(query);
-			int count = 0;
-			while (rs.next()) {
-				count = rs.getInt("count(id)");
-			}
-			return count == 1;
-		} catch(SQLException e){
-			e.printStackTrace();
-			return false;
 		}
 	}
 
