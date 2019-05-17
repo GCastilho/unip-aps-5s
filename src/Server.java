@@ -56,15 +56,12 @@ public class Server {
 				try {
 					if (Login.validCredentials(username, password)) {
 						String sessionID = Login.makeCookie(username, password);
-						if (sessionID != null) {
-							Headers headers = httpExchange.getResponseHeaders();
-							headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
-							headers.set("Location", "/app");
 
-							httpExchange.sendResponseHeaders(303, -1);
-						} else {
-							HttpErrors.send500(httpExchange);
-						}
+						Headers headers = httpExchange.getResponseHeaders();
+						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
+						headers.set("Location", "/app");
+
+						httpExchange.sendResponseHeaders(303, -1);
 					} else {
 						HttpErrors.send401(httpExchange);
 					}
