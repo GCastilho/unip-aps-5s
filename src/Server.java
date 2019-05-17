@@ -9,8 +9,8 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 
-import http.HttpErrors;
-import http.HttpFile;
+import http.Http;
+import api.Input;
 import login.Login;
 
 public class Server {
@@ -27,22 +27,12 @@ public class Server {
 	static class RootHandler implements HttpHandler {
 		public void handle(HttpExchange httpExchange) throws IOException {
 			if (httpExchange.getRequestMethod().equals("GET")) {
-				HttpFile.sendHtml(httpExchange, "/index.html");
+				Http.sendHtml(httpExchange, "/index.html");
 			} else if (httpExchange.getRequestMethod().equals("POST")) {
 				String username = null;
 				String password = null;
 				{
-					String query;
-					{
-						InputStreamReader is =  new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
-						BufferedReader br = new BufferedReader(is);
-						StringBuilder buf = new StringBuilder(512);
-						int b;
-						while ((b = br.read()) != -1) {
-							buf.append((char) b);
-						}
-						query = buf.toString();
-					}
+					String query = Http.getPOST(httpExchange.getRequestBody());
 					String[] array = query.split("&");
 					for (String str : array) {
 						String[] pair = str.split("=");
@@ -63,12 +53,12 @@ public class Server {
 
 						httpExchange.sendResponseHeaders(303, -1);
 					} else {
-						HttpErrors.send401(httpExchange);
+						Http.send401(httpExchange);
 					}
 				} catch (SQLException e) {
 					System.out.println("Error: "+e.getMessage());
 					e.printStackTrace();
-					HttpErrors.send500(httpExchange);
+					Http.send500(httpExchange);
 				}
 			}
 		}
@@ -98,23 +88,31 @@ public class Server {
 			}
 			try {
 				if (Login.validCookie(sessionID)) {
-					if (httpExchange.getRequestURI().getPath().equals("/app")) {
-						// Se /app foi acessada usando uma query, é um acesso a API
-						if (httpExchange.getRequestURI().getQuery() == null) {
-							HttpFile.sendHtml(httpExchange, "/app/app.html");
+					if (httpExchange.getRequestMethod().equals("GET")){
+						// Um acesso por GET pode ser tanto um acesso a API quanto ao site
+						if (httpExchange.getRequestURI().getPath().equals("/app")) {
+							// Se /app foi acessada usando uma query, é um acesso a API
+							if (httpExchange.getRequestURI().getQuery() == null) {
+								Http.sendHtml(httpExchange, "/app/app.html");
+							} else {
+								// Dá pra cacessar a API por um POST?
+								Input.process(httpExchange.getRequestURI().getQuery());
+								Http.send404(httpExchange);   //Temporary
+							}
 						} else {
-							System.out.println("'"+httpExchange.getRequestURI().getQuery()+"'");
-							HttpErrors.send404(httpExchange);   //Temporary
+							Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
 						}
-					} else {
-						HttpFile.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
+					} else if (httpExchange.getRequestMethod().equals("POST")) {
+						// Acessar /app por post é um acesso a API
+						Input.process(Http.getPOST(httpExchange.getRequestBody()));
+						Http.send404(httpExchange);
 					}
 				} else {
 					httpExchange.getResponseHeaders().set("Location", "/");
 					httpExchange.sendResponseHeaders(303, -1);
 				}
 			} catch (SQLException e) {
-				HttpErrors.send500(httpExchange);
+				Http.send500(httpExchange);
 			}
 		}
 	}
