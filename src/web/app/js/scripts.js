@@ -1,3 +1,7 @@
+$(function() {
+    console.log( "ready!" );
+
+
 //configurações da scrollbar
 $('.left-section, .message').mCustomScrollbar({
     scrollInertia: 85
@@ -13,7 +17,7 @@ var scrollUpdate = () => {
 //função para carregar as mensagens ao iniciar a pagina
 window.onload = () => {
     if (localStorage.getItem('key') === null) {
-        $.getJSON("../js/data.json", (data) => {
+        $.getJSON("js/data.json", (data) => {
             chatGenerator(data);
         });
     } else {
@@ -51,7 +55,7 @@ var chatGenerator = (data) => {
 $('.btn-send').click(() => {
     if ($('#inputMessage').val() !== "") {
         if (localStorage.getItem('key') === null) {
-            $.getJSON("../js/data.json", (data) => {
+            $.getJSON("js/data.json", (data) => {
                 let dt = new Date();
                 data.push({
                     id: "1",
@@ -77,6 +81,7 @@ $('.btn-send').click(() => {
 
 
     //função para teste, usada para limpar o armazenamento local
-    $('.teste').click(() => {
+    $('#test').click(() => {
         localStorage.clear();
     });
+});
