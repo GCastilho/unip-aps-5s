@@ -19,8 +19,8 @@ public class DatabaseConnection {
 		String serverName = "127.0.0.1:3306";    //caminho do servidor do BD
 		String mydatabase = "unip_aps_5s"; //nome do seu banco de dados
 		String url = "jdbc:mysql://" + serverName + "/"+mydatabase+"?useTimezone=true&serverTimezone=UTC";
-		String username = "aps";        //nome de um usuário de seu BD
-		String password = "";      //sua senha de acesso
+		String username = "root";        //nome de um usuário de seu BD
+		String password = "root";      //sua senha de acesso
 			
 		connection = DriverManager.getConnection(url, username, password);
 		if (connection != null) {

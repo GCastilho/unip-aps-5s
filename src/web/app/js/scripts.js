@@ -4,7 +4,7 @@ $('.left-section, .message').mCustomScrollbar({
 });
 
 //função para mudar o posicionamento do scrollbar
-let scrollUpdate = () => {
+var scrollUpdate = () => {
     $('.message').mCustomScrollbar("scrollTo", "bottom",{
         scrollInertia: 0
     });
@@ -22,7 +22,7 @@ window.onload = () => {
 };
 
 //função para gerar as mensagens e adicionar ao HTML
-let chatGenerator = (data) => {
+var chatGenerator = (data) => {
     console.log(data);
     for(var i = 0; i < data.length; i++) {
         if (data[i].id === "1") {
