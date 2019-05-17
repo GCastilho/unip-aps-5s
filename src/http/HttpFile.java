@@ -12,7 +12,7 @@ public class HttpFile {
 		try {
 			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
 
-			httpExchange.sendResponseHeaders(200, 0);
+			httpExchange.sendResponseHeaders(200, file.length());
 			OutputStream os = httpExchange.getResponseBody();
 			FileInputStream fs = new FileInputStream(file);
 			final byte[] buffer = new byte[0x10000];

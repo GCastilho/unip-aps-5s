@@ -99,7 +99,13 @@ public class Server {
 			try {
 				if (Login.validCookie(sessionID)) {
 					if (httpExchange.getRequestURI().getPath().equals("/app")) {
-						HttpFile.sendHtml(httpExchange, "/app/app.html");
+						// Se /app foi acessada usando uma query, é um acesso a API
+						if (httpExchange.getRequestURI().getQuery() == null) {
+							HttpFile.sendHtml(httpExchange, "/app/app.html");
+						} else {
+							System.out.println("'"+httpExchange.getRequestURI().getQuery()+"'");
+							HttpErrors.send404(httpExchange);   //Temporary
+						}
 					} else {
 						HttpFile.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
 					}
