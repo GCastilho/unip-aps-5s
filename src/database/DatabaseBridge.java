@@ -29,7 +29,6 @@ public class DatabaseBridge {
 	public static String updateCookie(String username ,String sessionId) throws Exception {
 		String query = "delete from cookie where sessionId ='"+sessionId+"'";
 
-		// TODO: Essa função não funciona, tá? Não mexi nela mas ela não funciona, só dá uma olhada nesse código
 		DatabaseConnection.executeQuery(query);
 
 		return makeCookie(username, sessionId);

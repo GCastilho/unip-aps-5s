@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -98,7 +99,7 @@ public class Server {
 				}
 			}
 			try {
-				if (Login.validCookie(sessionID)) {
+				if (DatabaseBridge.validCookie(sessionID)) {
 					if (httpExchange.getRequestURI().getPath().equals("/app")) {
 						HttpFile.sendHtml(httpExchange, "/app/app.html");
 					} else {
@@ -108,7 +109,7 @@ public class Server {
 					httpExchange.getResponseHeaders().set("Location", "/");
 					httpExchange.sendResponseHeaders(303, -1);
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				HttpErrors.send500(httpExchange);
 			}
 		}
