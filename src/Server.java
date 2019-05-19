@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -11,7 +10,7 @@ import com.sun.net.httpserver.Headers;
 
 import http.HttpErrors;
 import http.HttpFile;
-import login.Login;
+import database.DatabaseBridge;
 
 public class Server {
 
@@ -54,8 +53,8 @@ public class Server {
 					}
 				}
 				try {
-					if (Login.validCredentials(username, password)) {
-						String sessionID = Login.makeCookie(username, password);
+					if (DatabaseBridge.validCredentials(username, password)) {
+						String sessionID = DatabaseBridge.makeCookie(username, password);
 						if (sessionID != null) {
 							Headers headers = httpExchange.getResponseHeaders();
 							headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
@@ -68,7 +67,7 @@ public class Server {
 					} else {
 						HttpErrors.send401(httpExchange);
 					}
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println("Error: "+e.getMessage());
 					e.printStackTrace();
 					HttpErrors.send500(httpExchange);
@@ -100,7 +99,7 @@ public class Server {
 				}
 			}
 			try {
-				if (Login.validCookie(sessionID)) {
+				if (DatabaseBridge.validCookie(sessionID)) {
 					if (httpExchange.getRequestURI().getPath().equals("/app")) {
 						HttpFile.sendHtml(httpExchange, "/app/app.html");
 					} else {
@@ -110,7 +109,7 @@ public class Server {
 					httpExchange.getResponseHeaders().set("Location", "/");
 					httpExchange.sendResponseHeaders(303, -1);
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				HttpErrors.send500(httpExchange);
 			}
 		}
