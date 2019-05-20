@@ -96,8 +96,8 @@ public class Server {
 								Http.sendHtml(httpExchange, "/app/app.html");
 							} else {
 								// Dá pra cacessar a API por um POST?
-								Input.process(httpExchange.getRequestURI().getQuery());
-								Http.send404(httpExchange);   //Temporary
+								String response = Input.process(httpExchange.getRequestURI().getQuery());
+								Http.sendJson(httpExchange, response);
 							}
 						} else {
 							Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());

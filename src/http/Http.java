@@ -52,6 +52,10 @@ public class Http {
 		send(httpExchange, response, 500);
 	}
 
+	public static void sendJson(HttpExchange httpExchange, String json) {
+		send(httpExchange, json, 200);
+	}
+
 	public static void sendHtml(HttpExchange httpExchange, String path) {
 		try {
 			File root = new File(new File(".").getCanonicalPath() + "/src/web");
