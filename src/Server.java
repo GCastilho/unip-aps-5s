@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
 import java.util.List;
 
 import com.sun.net.httpserver.HttpExchange;
@@ -11,7 +10,7 @@ import com.sun.net.httpserver.Headers;
 
 import http.Http;
 import api.Input;
-import login.Login;
+import database.DatabaseBridge;
 
 public class Server {
 
@@ -48,9 +47,8 @@ public class Server {
 					}
 				}
 				try {
-					if (Login.validCredentials(username, password)) {
-						String sessionID = Login.makeCookie(username, password);
-
+					if (DatabaseBridge.validCredentials(username, password)) {
+						String sessionID = DatabaseBridge.makeCookie(username, password);
 						Headers headers = httpExchange.getResponseHeaders();
 						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
 						headers.set("Location", "/app");
@@ -59,7 +57,7 @@ public class Server {
 					} else {
 						Http.send401(httpExchange);
 					}
-				} catch (SQLException e) {
+				} catch (Exception e) {
 					System.out.println("Error: "+e.getMessage());
 					e.printStackTrace();
 					Http.send500(httpExchange);
@@ -91,7 +89,7 @@ public class Server {
 				}
 			}
 			try {
-				if (Login.validCookie(sessionID)) {
+				if (DatabaseBridge.validCookie(sessionID)) {
 					if (httpExchange.getRequestMethod().equals("GET")){
 						// Um acesso por GET pode ser tanto um acesso a API quanto ao site
 						if (httpExchange.getRequestURI().getPath().equals("/app")) {
@@ -121,7 +119,7 @@ public class Server {
 						Http.sendJson(httpExchange, response);
 					}
 				}
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				Http.send500(httpExchange);
 			}
 		}
