@@ -27,7 +27,11 @@ public class Server {
 	static class RootHandler implements HttpHandler {
 		public void handle(HttpExchange httpExchange) throws IOException {
 			if (httpExchange.getRequestMethod().equals("GET")) {
-				Http.sendHtml(httpExchange, "/index.html");
+				if (httpExchange.getRequestURI().getPath().equals("/")) {   // Temp solution
+					Http.sendHtml(httpExchange, "/index.html");
+				} else {
+					Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
+				}
 			} else if (httpExchange.getRequestMethod().equals("POST")) {
 				String username = null;
 				String password = null;
@@ -108,8 +112,14 @@ public class Server {
 						Http.send404(httpExchange);
 					}
 				} else {
-					httpExchange.getResponseHeaders().set("Location", "/");
-					httpExchange.sendResponseHeaders(303, -1);
+					// Se /app foi acessada usando uma query, é um acesso a API e deve ser respondido com json
+					if (httpExchange.getRequestURI().getQuery() == null) {
+						httpExchange.getResponseHeaders().set("Location", "/");
+						httpExchange.sendResponseHeaders(303, -1);
+					} else {
+						String response = Input.process("command=notLoggedIn");
+						Http.sendJson(httpExchange, response);
+					}
 				}
 			} catch (SQLException e) {
 				Http.send500(httpExchange);

@@ -1,12 +1,56 @@
+# Created by https://www.gitignore.io/api/intellij
+# Edit at https://www.gitignore.io/?templates=intellij
 
+### Intellij ###
+
+# User-specific stuff
+.idea/**/workspace.xml
+.idea/**/misc.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# Generated files
+.idea/**/contentModel.xml
+
+# Sensitive or high-churn files
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+.idea/**/dbnavigator.xml
+
+# Mongo Explorer plugin
+.idea/**/mongoSettings.xml
+
+# File-based project format
+*.iws
+
+# IntelliJ
 out/
 
-\.idea/dataSources/
+# mpeltonen/sbt-idea plugin
+.idea_modules/
 
-\.idea/dataSources\.local\.xml
+# JIRA plugin
+atlassian-ide-plugin.xml
 
-\.idea/dataSources\.xml
+# Cursive Clojure plugin
+.idea/replstate.xml
 
-\.idea/workspace\.xml
+# Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+fabric.properties
 
-\.idea/misc\.xml
+# Editor-based Rest Client
+.idea/httpRequests
+
+# JetBrains templates
+**___jb_tmp___
+
+# End of https://www.gitignore.io/api/intellij

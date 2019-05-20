@@ -8,29 +8,29 @@ import java.util.Map;
 
 public class Input {
 	public static String process(String query) {
-		System.out.println("'"+query+"'");
-
 		JSONObject response = new JSONObject();
 
 		// Comandos reconhecidos (ok)
 		Map<String, Runnable> commands = new HashMap<>();
 		commands.put("hello", () -> {
 			response.put("status", "ok");
-			System.out.println("Hello");
 			response.put("message", "hi");
 		});
 
 		// Comandos de erro
 		commands.put("commandNotFound", () -> {
 			response.put("status", "error");
-			System.out.println("Command not found!");
 			response.put("errorMessage", "Command not found");
 		});
 
 		commands.put("badRequest", () -> {
 			response.put("status", "error");
-			System.out.println("Bad request");
 			response.put("errorMessage", "Bad request");
+		});
+
+		commands.put("notLoggedIn", () -> {
+			response.put("status", "error");
+			response.put("errorMessage", "Not logged in");
 		});
 
 		Map<String, String> map = new HashMap<>();
