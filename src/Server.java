@@ -8,8 +8,8 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 
-import http.HttpErrors;
-import http.HttpFile;
+import http.Http;
+import api.Input;
 import database.DatabaseBridge;
 
 public class Server {
@@ -26,22 +26,16 @@ public class Server {
 	static class RootHandler implements HttpHandler {
 		public void handle(HttpExchange httpExchange) throws IOException {
 			if (httpExchange.getRequestMethod().equals("GET")) {
-				HttpFile.sendHtml(httpExchange, "/index.html");
+				if (httpExchange.getRequestURI().getPath().equals("/")) {   // Temp solution
+					Http.sendHtml(httpExchange, "/index.html");
+				} else {
+					Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
+				}
 			} else if (httpExchange.getRequestMethod().equals("POST")) {
 				String username = null;
 				String password = null;
 				{
-					String query;
-					{
-						InputStreamReader is =  new InputStreamReader(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
-						BufferedReader br = new BufferedReader(is);
-						StringBuilder buf = new StringBuilder(512);
-						int b;
-						while ((b = br.read()) != -1) {
-							buf.append((char) b);
-						}
-						query = buf.toString();
-					}
+					String query = Http.getPOST(httpExchange.getRequestBody());
 					String[] array = query.split("&");
 					for (String str : array) {
 						String[] pair = str.split("=");
@@ -55,22 +49,18 @@ public class Server {
 				try {
 					if (DatabaseBridge.validCredentials(username, password)) {
 						String sessionID = DatabaseBridge.makeCookie(username, password);
-						if (sessionID != null) {
-							Headers headers = httpExchange.getResponseHeaders();
-							headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
-							headers.set("Location", "/app");
+						Headers headers = httpExchange.getResponseHeaders();
+						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
+						headers.set("Location", "/app");
 
-							httpExchange.sendResponseHeaders(303, -1);
-						} else {
-							HttpErrors.send500(httpExchange);
-						}
+						httpExchange.sendResponseHeaders(303, -1);
 					} else {
-						HttpErrors.send401(httpExchange);
+						Http.send401(httpExchange);
 					}
 				} catch (Exception e) {
 					System.out.println("Error: "+e.getMessage());
 					e.printStackTrace();
-					HttpErrors.send500(httpExchange);
+					Http.send500(httpExchange);
 				}
 			}
 		}
@@ -100,17 +90,37 @@ public class Server {
 			}
 			try {
 				if (DatabaseBridge.validCookie(sessionID)) {
-					if (httpExchange.getRequestURI().getPath().equals("/app")) {
-						HttpFile.sendHtml(httpExchange, "/app/app.html");
-					} else {
-						HttpFile.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
+					if (httpExchange.getRequestMethod().equals("GET")){
+						// Um acesso por GET pode ser tanto um acesso a API quanto ao site
+						if (httpExchange.getRequestURI().getPath().equals("/app")) {
+							// Se /app foi acessada usando uma query, é um acesso a API
+							if (httpExchange.getRequestURI().getQuery() == null) {
+								Http.sendHtml(httpExchange, "/app/app.html");
+							} else {
+								// Dá pra cacessar a API por um POST?
+								String response = Input.process(httpExchange.getRequestURI().getQuery());
+								Http.sendJson(httpExchange, response);
+							}
+						} else {
+							Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
+						}
+					} else if (httpExchange.getRequestMethod().equals("POST")) {
+						// Acessar /app por post é um acesso a API
+						Input.process(Http.getPOST(httpExchange.getRequestBody()));
+						Http.send404(httpExchange);
 					}
 				} else {
-					httpExchange.getResponseHeaders().set("Location", "/");
-					httpExchange.sendResponseHeaders(303, -1);
+					// Se /app foi acessada usando uma query, é um acesso a API e deve ser respondido com json
+					if (httpExchange.getRequestURI().getQuery() == null) {
+						httpExchange.getResponseHeaders().set("Location", "/");
+						httpExchange.sendResponseHeaders(303, -1);
+					} else {
+						String response = Input.process("command=notLoggedIn");
+						Http.sendJson(httpExchange, response);
+					}
 				}
 			} catch (Exception e) {
-				HttpErrors.send500(httpExchange);
+				Http.send500(httpExchange);
 			}
 		}
 	}
