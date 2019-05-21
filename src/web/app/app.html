@@ -7,8 +7,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/message.css">
-    <script src="js/jquery-3.4.1.min.js"></script>
-    <script type="module" src="js/scripts.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/scripts.js" type="application/javascript"></script>
     <title>chat</title>
 </head>
 <body>
@@ -19,7 +20,7 @@
                 <label>
                     <h3>Online</h3>
                 </label>
-                <button class="teste"> <i class="fa fa-search"></i> </button>
+                <button id="test"> apagar localstorage</i> </button>
             </div>
         </div>
         <div class="headRight-section">
@@ -178,23 +179,20 @@
                 </ul>
             </div>
             <div class="right-section-bottom">
-                <form action="" method="POST" name="myForm">
                     <div class="upload-btn">
                         <button class="btn" ><i class="fa fa-photo"></i></button>
                         <input class="fa-paperclip" type="file" name="" />
                     </div>
                     <label>
-                        <input id="inputMessage" type="text" name="inputMessage" onfocus="this.value=''" placeholder="type here...">
+                        <input id="inputMessage" type="text" name="inputMessage" placeholder="type here..." autofocus>
                     </label>
                     <button type="submit" class="btn-send"><i class="fa fa-send"></i></button>
-                </form>
             </div>
         </div>
     </div>
 </div>
 
 <!-- custom scrollbar plugin -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
 </body>
 </html>
