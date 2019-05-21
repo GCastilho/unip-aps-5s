@@ -29,7 +29,8 @@ public class DatabaseConnection {
 					"select id from credential where username = ? and password_hash = ?");
 			stmt.setString(1, username);
 			stmt.setString(2, password);
-			//the prepared statement returns a result set(
+
+			//the prepared statement returns a result set
 			//the Result Set of the return executes next() to verify if the first row of the select is empty
 			return stmt.executeQuery().next();
 		} finally {
@@ -41,7 +42,8 @@ public class DatabaseConnection {
 		long time = new Date().getTime();
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"insert into cookie (username,sessionID,timestamp) values (?,?,?)");
+					"insert into cookie (username,sessionID,timestamp) values (?,?,?)"
+			);
 			preparedStatement.setString(1, user);
 			preparedStatement.setString(2, password = getSHA512(password + user + time));
 			preparedStatement.setLong(3, time);
@@ -57,7 +59,8 @@ public class DatabaseConnection {
 	public static String updateCookie(String username, String sessionId) throws Exception {
 		try {
 			getConnection().createStatement().executeQuery(
-					"delete from cookie where sessionId ='" + sessionId + "'");
+					"delete from cookie where sessionId ='" + sessionId + "'"
+			);
 
 		} finally {
 			conn.close();
