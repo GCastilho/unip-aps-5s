@@ -10,7 +10,7 @@ import com.sun.net.httpserver.Headers;
 
 import http.HttpErrors;
 import http.HttpFile;
-import database.DatabaseBridge;
+import database.DatabaseConnection;
 
 public class Server {
 
@@ -53,8 +53,8 @@ public class Server {
 					}
 				}
 				try {
-					if (DatabaseBridge.validCredentials(username, password)) {
-						String sessionID = DatabaseBridge.makeCookie(username, password);
+					if (DatabaseConnection.validCredentials(username, password)) {
+						String sessionID = DatabaseConnection.makeCookie(username, password);
 						if (sessionID != null) {
 							Headers headers = httpExchange.getResponseHeaders();
 							headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
@@ -99,7 +99,7 @@ public class Server {
 				}
 			}
 			try {
-				if (DatabaseBridge.validCookie(sessionID)) {
+				if (DatabaseConnection.validCookie(sessionID)) {
 					if (httpExchange.getRequestURI().getPath().equals("/app")) {
 						HttpFile.sendHtml(httpExchange, "/app/app.html");
 					} else {
