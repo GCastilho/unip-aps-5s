@@ -21,32 +21,69 @@ $(function() {
             });
         } else {
             let buffer = JSON.parse(localStorage.getItem('key'));
+
             for(let i = 0; i < buffer.length; i++) {
                 chatGenerator(buffer[i]);
             }
         }
     };
 
+    /*ws.onmessage = (evt) => {
+        alert("Message: " + evt.data);
+        let data = evt.data;
+        let localData = JSON.parse(localStorage.getItem('key'));
+
+        if (data.sessionId === document.cookie.slice(10)) {
+            localData.push({
+                side: "1",
+                message: data.message,
+                time: data.time
+            });
+
+            localStorage.clear();
+            localStorage.setItem('key', JSON.stringify(localData));
+
+            $('.chat').html(() => {
+                chatGenerator(localData[localData.length - 1]);
+            });
+        } else {
+            localData.push({
+                side: "2",
+                message: data.message,
+                time: data.time
+            });
+
+            localStorage.clear();
+            localStorage.setItem('key', JSON.stringify(localData));
+
+            $('.chat').html(() => {
+                chatGenerator(localData[localData.length - 1]);
+            });
+        }
+    };*/
+
     //função para gerar as mensagens e adicionar ao HTML
     let chatGenerator = (data) => {
         console.log(data);
-        if (data.id === "1") {
+        if (data.side === "1") {
             $('.chat').append("<li class=\"msg-right\">" +
-                "                        <div class=\"msg-left-sub\">" +
-                "                            <div class=\"msg-desc\">" + data.message +
-                "                            </div>" +
-                "                            <small>"+data.time+"</small>" +
-                "                        </div>" +
-                "                    </li>");
+                "<div class=\"msg-left-sub\">" +
+                "<div class=\"msg-desc\">" + data.message +
+                "</div>" +
+                "<small>"+data.time+"</small>" +
+                "</div>" +
+                "</li>");
+
             scrollUpdate();
         } else {
             $('.chat').append("<li class=\"msg-left\">" +
-                "                        <div class=\"msg-left-sub\">" +
-                "                            <div class=\"msg-desc\">" + data.message +
-                "                            </div>" +
-                "                            <small>"+data.time+"</small>" +
-                "                        </div>" +
-                "                    </li>");
+                "<div class=\"msg-left-sub\">" +
+                "<div class=\"msg-desc\">" + data.message +
+                "</div>" +
+                "<small>"+data.time+"</small>" +
+                "</div>" +
+                "</li>");
+
             scrollUpdate();
         }
     };
@@ -54,16 +91,33 @@ $(function() {
     //função de envio
     let send = () =>{
         if ($('#inputMessage').val() !== "") {
-            if (localStorage.getItem('key') === null) {
+            $.ajax({
+                url: "/app?command=send",
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    sessionId: document.cookie.slice(10),
+                    message: $('#inputMessage').val(),
+                    time: (new Date()).getHours() + ":" + String((new Date()).getMinutes()).padStart(2, '0')
+                },
+                success: (data) => {
+                    console.log(data);
+                }
+            });
+
+            /*if (localStorage.getItem('key') === null) {
                 $.getJSON("js/data.json", (data) => {
                     let dt = new Date();
+
                     data.push({
-                        id: "1",
+                        side: "1",
                         message: $('#inputMessage').val(),
                         time: dt.getHours() + ":" + String(dt.getMinutes()).padStart(2, '0')
                     });
+
                     console.log(data);
                     localStorage.setItem('key', JSON.stringify(data));
+
                     $('.chat').html(() => {
                         chatGenerator(data[data.length - 1]);
                     });
@@ -71,18 +125,24 @@ $(function() {
             } else {
                 let data = JSON.parse(localStorage.getItem('key'));
                 let dt = new Date();
+
+                console.log(Date.now());
+                console.log(document.cookie.slice(10));
+
                 data.push({
-                    id: "1",
+                    side: "1",
                     message: $('#inputMessage').val(),
                     time: dt.getHours() + ":" + String(dt.getMinutes()).padStart(2, '0')
                 });
+
                 localStorage.clear();
                 localStorage.setItem('key', JSON.stringify(data));
+
                 $('.chat').html(() => {
                     chatGenerator(data[data.length - 1]);
                 });
             }
-            scrollUpdate();
+            scrollUpdate();*/
             $('#inputMessage').val('');
         }
     };
