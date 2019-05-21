@@ -10,7 +10,7 @@ import com.sun.net.httpserver.Headers;
 
 import http.Http;
 import api.Input;
-import database.DatabaseBridge;
+import database.DatabaseConnection;
 
 public class Server {
 
@@ -47,8 +47,8 @@ public class Server {
 					}
 				}
 				try {
-					if (DatabaseBridge.validCredentials(username, password)) {
-						String sessionID = DatabaseBridge.makeCookie(username, password);
+					if (DatabaseConnection.validCredentials(username, password)) {
+						String sessionID = DatabaseConnection.makeCookie(username, password);
 						Headers headers = httpExchange.getResponseHeaders();
 						headers.set("Set-Cookie", String.format("%s=%s; path=/app", "sessionID", sessionID));
 						headers.set("Location", "/app");
@@ -89,7 +89,7 @@ public class Server {
 				}
 			}
 			try {
-				if (DatabaseBridge.validCookie(sessionID)) {
+				if (DatabaseConnection.validCookie(sessionID)) {
 					if (httpExchange.getRequestMethod().equals("GET")){
 						// Um acesso por GET pode ser tanto um acesso a API quanto ao site
 						if (httpExchange.getRequestURI().getPath().equals("/app")) {
