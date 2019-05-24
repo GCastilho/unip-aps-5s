@@ -61,7 +61,6 @@ public class DatabaseConnection {
 			getConnection().createStatement().executeQuery(
 					"delete from cookie where sessionId ='" + sessionId + "'"
 			);
-
 		} finally {
 			conn.close();
 		}
@@ -74,6 +73,7 @@ public class DatabaseConnection {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(
 					"select timestamp from cookie where sessionId = '"+sessionId+"'"
 			);
+
 			//verify if cookie timestamp is bigger than 10 minutes (in miliseconds)
 			return resultSet.next() && resultSet.getLong(1) > new Date().getTime()-600000;
 		} finally {
