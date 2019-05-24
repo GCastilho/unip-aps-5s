@@ -1,5 +1,8 @@
 package api;
 
+import com.mongodb.*;
+import database.MongoConnection;
+import org.bson.Document;
 import org.json.JSONObject;
 
 import java.io.IOException;
