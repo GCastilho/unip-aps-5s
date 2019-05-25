@@ -7,7 +7,7 @@ import database.DatabaseConnection;
 
 import java.io.IOException;
 
-public class HttpHost {
+public class HttpRootHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         if (httpExchange.getRequestMethod().equals("GET")) {
             if (httpExchange.getRequestURI().getPath().equals("/")) {//
