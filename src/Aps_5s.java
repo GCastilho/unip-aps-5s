@@ -3,16 +3,21 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import api.ServerSocketHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.Headers;
 
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.websocket.server.WebSocketHandler;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
+
 import http.Http;
 import api.Input;
 import database.DatabaseConnection;
 
-public class Server {
+public class Aps_5s {
 
 	public static void main(String[] args) throws Exception {
 		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
@@ -20,7 +25,19 @@ public class Server {
 		server.createContext("/app", new AppHandler());
 		server.setExecutor(null); // creates a default executor
 		server.start();
-		System.out.println("Server is up and running on port 8000");
+		System.out.println("HTTP server is up and running on port 8000");
+
+		Server api_server = new Server(8080);
+		WebSocketHandler wsHandler = new WebSocketHandler() {
+			@Override
+			public void configure(WebSocketServletFactory factory) {
+				factory.register(api.ServerSocketHandler.class);
+			}
+		};
+		api_server.setHandler(wsHandler);
+		api_server.start();
+		//api_server.join();
+		System.out.println("API server is up and running on port 8080");
 	}
 
 	static class RootHandler implements HttpHandler {

@@ -61,7 +61,6 @@ public class DatabaseConnection {
 			getConnection().createStatement().executeQuery(
 					"delete from cookie where sessionId ='" + sessionId + "'"
 			);
-
 		} finally {
 			conn.close();
 		}
@@ -74,10 +73,25 @@ public class DatabaseConnection {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(
 					"select timestamp from cookie where sessionId = '"+sessionId+"'"
 			);
+
 			//verify if cookie timestamp is bigger than 10 minutes (in miliseconds)
 			return resultSet.next() && resultSet.getLong(1) > new Date().getTime()-600000;
 		} finally {
 			conn.close();
+		}
+	}
+	public static String getUser(String sessionId) throws Exception {
+		try {
+			ResultSet resultSet = getConnection().createStatement().executeQuery(
+					"select username from cookie where sessionId = '" + sessionId + "'"
+			);
+			if (resultSet.next()) {
+				return resultSet.getString(1);
+			} else {
+				throw new Exception("Username not found for given sessionID");
+			}
+		} finally {
+			conn.close ();
 		}
 	}
 
