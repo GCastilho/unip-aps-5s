@@ -17,6 +17,13 @@ public class Input {
 			response.put("message", "hi");
 		});
 
+		commands.put("send", () -> {
+			response.put("status", "ok");
+			response.put("sended", true);
+			//sender ser sessionid é temporário
+			ServerSocketHandler.send(data.get("sessionID").toString(), data.get("message").toString());
+		});
+
 		// Comandos de erro
 		commands.put("commandNotFound", () -> {
 			response.put("status", "error");

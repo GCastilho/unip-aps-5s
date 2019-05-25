@@ -80,7 +80,7 @@ public class ServerSocketHandler {
 		}
 	}
 
-	void send(String userID, JSONObject message) {
+	static void send(String userID, String message) {
 		// is the destination client connected?
 		if (ServerSocketHandler.sockets.containsKey(userID)) {
 			// get clientSession object from socketsMap
