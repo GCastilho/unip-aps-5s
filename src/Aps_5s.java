@@ -115,16 +115,16 @@ public class Aps_5s {
 								Http.sendHtml(httpExchange, "/app/app.html");
 							} else {
 								// Dá pra cacessar a API por um POST?
-								String response = Input.process(httpExchange.getRequestURI().getQuery());
-								Http.sendJson(httpExchange, response);
+								/*String response = Input.process(httpExchange.getRequestURI().getQuery());
+								Http.sendJson(httpExchange, response);*/
 							}
 						} else {
 							Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
 						}
 					} else if (httpExchange.getRequestMethod().equals("POST")) {
 						// Acessar /app por post é um acesso a API
-						Input.process(Http.getPOST(httpExchange.getRequestBody()));
-						Http.send404(httpExchange);
+						/*Input.process(Http.getPOST(httpExchange.getRequestBody()));
+						Http.send404(httpExchange);*/
 					}
 				} else {
 					// Se /app foi acessada usando uma query, é um acesso a API e deve ser respondido com json
@@ -132,8 +132,8 @@ public class Aps_5s {
 						httpExchange.getResponseHeaders().set("Location", "/");
 						httpExchange.sendResponseHeaders(303, -1);
 					} else {
-						String response = Input.process("command=notLoggedIn");
-						Http.sendJson(httpExchange, response);
+						/*String response = Input.process("command=notLoggedIn");
+						Http.sendJson(httpExchange, response);*/
 					}
 				}
 			} catch (Exception e) {

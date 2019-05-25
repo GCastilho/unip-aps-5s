@@ -23,6 +23,9 @@ public class Input {
 				ServerSocketHandler.send(data.get("receiver").toString(), data.get("message").toString());
 				response.put("status", "ok");
 				response.put("sended", true);
+				response.put("receiver", data.get("receiver").toString());
+				response.put("message", data.get("message").toString());
+				response.put("timestamp", data.get("timestamp").toString());
 			} catch (IOException e) {
 				e.printStackTrace();
 				response.put("status", "error");
