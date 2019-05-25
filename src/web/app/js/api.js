@@ -66,7 +66,7 @@ $(() => {
         if ($('#inputMessage').val() !== "") {
             ws.send(JSON.stringify({
                 command: "send",
-                receiver: document.cookie.slice("SessionID=".length),
+                receiver: document.cookie.slice("sessionID=".length),
                 message: $('#inputMessage').val(),
                 timestamp: (new Date()).getTime()
             }));

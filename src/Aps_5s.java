@@ -1,9 +1,7 @@
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import api.ServerSocketHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -14,7 +12,6 @@ import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import http.Http;
-import api.Input;
 import database.DatabaseConnection;
 
 public class Aps_5s {
@@ -32,6 +29,7 @@ public class Aps_5s {
 			@Override
 			public void configure(WebSocketServletFactory factory) {
 				factory.register(api.ServerSocketHandler.class);
+				factory.getPolicy().setIdleTimeout(0);  //(36000000);   //10 Minutes
 			}
 		};
 		api_server.setHandler(wsHandler);
@@ -115,16 +113,16 @@ public class Aps_5s {
 								Http.sendHtml(httpExchange, "/app/app.html");
 							} else {
 								// Dá pra cacessar a API por um POST?
-								/*String response = Input.process(httpExchange.getRequestURI().getQuery());
-								Http.sendJson(httpExchange, response);*/
+								//String response = Api.process(httpExchange.getRequestURI().getQuery());
+								Http.sendJson(httpExchange, "response");
 							}
 						} else {
 							Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
 						}
 					} else if (httpExchange.getRequestMethod().equals("POST")) {
 						// Acessar /app por post é um acesso a API
-						/*Input.process(Http.getPOST(httpExchange.getRequestBody()));
-						Http.send404(httpExchange);*/
+						//Api.process(Http.getPOST(httpExchange.getRequestBody()));
+						Http.send404(httpExchange);
 					}
 				} else {
 					// Se /app foi acessada usando uma query, é um acesso a API e deve ser respondido com json
@@ -132,8 +130,8 @@ public class Aps_5s {
 						httpExchange.getResponseHeaders().set("Location", "/");
 						httpExchange.sendResponseHeaders(303, -1);
 					} else {
-						/*String response = Input.process("command=notLoggedIn");
-						Http.sendJson(httpExchange, response);*/
+						//String response = Api.process("command=notLoggedIn");
+						Http.sendJson(httpExchange, "response");
 					}
 				}
 			} catch (Exception e) {

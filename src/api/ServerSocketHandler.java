@@ -18,6 +18,7 @@ public class ServerSocketHandler {
 	private final static HashMap<String, ServerSocketHandler> sockets = new HashMap<>();
 	private Session session = null;
 	private String userID = null;
+	private String sessionID = null;
 
 	@OnWebSocketClose
 	public void onClose(Session session, int statusCode, String reason) {
@@ -47,7 +48,7 @@ public class ServerSocketHandler {
 	}
 
 	@OnWebSocketMessage
-	public void onMessage(String message) throws IOException {
+	public void onMessage(String message) throws Exception {
 		System.out.println("Message: " + message);
 		JSONObject jsonMessage = new JSONObject(message);
 
@@ -55,27 +56,35 @@ public class ServerSocketHandler {
 		if (userID == null) {
 			if (jsonMessage.get("command").equals("greetings")) {
 				try {
-					this.userID = DatabaseConnection.getUser(jsonMessage.get("sessionID").toString());
+					this.userID = DatabaseConnection.getUser(jsonMessage.getString("sessionID"));
+					this.sessionID = jsonMessage.getString("sessionID");
 
 					// map this userID to this connection
 					ServerSocketHandler.sockets.put(this.userID, this);
 
 					response.put("status", "ok");
-					response.put("command", "greetings");
+					response.put("info", "greetings");
 				} catch (SQLException e) {
 					response.put("status", "error");
-					response.put("errorMessage", "Internal server error");
+					response.put("info", "Internal server error");
 				} catch (Exception e) {
 					response.put("status", "error");
-					response.put("errorMessage", e.getMessage());
+					response.put("info", e.getMessage());
 				}
 			} else {
 				response.put("status", "error");
-				response.put("errorMessage", "Not logged in");
+				response.put("info", "Not logged in");
 			}
 		} else {
-			// o usuário está logado, envia os dados que ele mandou ao Input
-			response = Input.process(jsonMessage);
+			if (DatabaseConnection.validCookie(this.sessionID)) {
+				// Atualizar o cookie do usuário aqui
+				// O cliente tbm deve atualizar o cookie do usuário em cada interação
+				jsonMessage.put("userID", userID);
+				response = Api.process(jsonMessage);
+			} else {
+				response.put("status", "error");
+				response.put("info", "Not logged in");
+			}
 		}
 		this.sendClient(response.toString());
 	}
@@ -89,7 +98,7 @@ public class ServerSocketHandler {
 		if (ServerSocketHandler.sockets.containsKey(userID)) {
 			// get clientSession object from socketsMap
 			ServerSocketHandler clientSession = sockets.get(userID);
-			clientSession.sendClient(message.toString());
+			clientSession.sendClient(message);
 		}
 	}
 }
