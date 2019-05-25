@@ -80,6 +80,20 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
+	public static String getUser(String sessionId) throws Exception{
+		try {
+			ResultSet resultSet = getConnection().createStatement().executeQuery(
+					"select username from cookie where sessionId = '" + sessionId + "'"
+			);
+			if (resultSet.next()) {
+				return resultSet.getString(1);
+			} else {
+				throw new Exception();
+			}
+		} finally {
+			conn.close ();
+		}
+	}
 
 
 	private static String getSHA512(String input) throws NoSuchAlgorithmException {
