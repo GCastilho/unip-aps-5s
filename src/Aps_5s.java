@@ -3,7 +3,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import api.MyWebSocketHandler;
+import api.ServerSocketHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -31,7 +31,7 @@ public class Aps_5s {
 		WebSocketHandler wsHandler = new WebSocketHandler() {
 			@Override
 			public void configure(WebSocketServletFactory factory) {
-				factory.register(api.MyWebSocketHandler.class);
+				factory.register(api.ServerSocketHandler.class);
 			}
 		};
 		api_server.setHandler(wsHandler);
