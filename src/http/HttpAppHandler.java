@@ -1,6 +1,5 @@
 package http;
 
-import api.Input;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -33,34 +32,18 @@ public class HttpAppHandler implements HttpHandler {
         }
         try {
             if (DatabaseConnection.validCookie(sessionID)) {
-                if (httpExchange.getRequestMethod().equals("GET")){
-                    // Um acesso por GET pode ser tanto um acesso a API quanto ao site
+                if (httpExchange.getRequestMethod().equals("GET")) {
                     if (httpExchange.getRequestURI().getPath().equals("/app")) {
-                        // Se /app foi acessada usando uma query, é um acesso a API
                         if (httpExchange.getRequestURI().getQuery() == null) {
                             Http.sendHtml(httpExchange, "/app/app.html");
-                        } else {
-                            // Dá pra cacessar a API por um POST?
-                            String response = Input.process(httpExchange.getRequestURI().getQuery());
-                            Http.sendJson(httpExchange, response);
                         }
                     } else {
                         Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
                     }
-                } else if (httpExchange.getRequestMethod().equals("POST")) {
-                    // Acessar /app por post é um acesso a API
-                    Input.process(Http.getPOST(httpExchange.getRequestBody()));
-                    Http.send404(httpExchange);
                 }
             } else {
-                // Se /app foi acessada usando uma query, é um acesso a API e deve ser respondido com json
-                if (httpExchange.getRequestURI().getQuery() == null) {
-                    httpExchange.getResponseHeaders().set("Location", "/");
-                    httpExchange.sendResponseHeaders(303, -1);
-                } else {
-                    String response = Input.process("command=notLoggedIn");
-                    Http.sendJson(httpExchange, response);
-                }
+                httpExchange.getResponseHeaders().set("Location", "/");
+                httpExchange.sendResponseHeaders(303, -1);
             }
         } catch (Exception e) {
             Http.send500(httpExchange);
