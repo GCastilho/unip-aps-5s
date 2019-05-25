@@ -1,7 +1,7 @@
 body{
     font-family: 'Raleway', sans-serif;
     background-color: #ACCEDC;
-    margin: 50px 0px;
+    margin: 3% 3% 3% 3%;
 }
 .main-section small{
     font-size: 12px;
@@ -10,10 +10,11 @@ body{
     margin: 0px;
 }
 .main-section{
-    width: 960px;
+    width: 80%;
+    height: 10%;
     background-color: #fff;
-    margin: auto;
-    position: center;
+    margin: 3% 10%;
+    position: relative;
 }
 .head-section{
     border-bottom:1px solid #E6E6E6;
