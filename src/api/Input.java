@@ -2,6 +2,7 @@ package api;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +19,15 @@ public class Input {
 		});
 
 		commands.put("send", () -> {
-			response.put("status", "ok");
-			response.put("sended", true);
-			//sender ser sessionid é temporário
-			ServerSocketHandler.send(data.get("sessionID").toString(), data.get("message").toString());
+			try {
+				ServerSocketHandler.send(data.get("receiver").toString(), data.get("message").toString());
+				response.put("status", "ok");
+				response.put("sended", true);
+			} catch (IOException e) {
+				e.printStackTrace();
+				response.put("status", "error");
+				response.put("errorMessage", "Internal server error");
+			}
 		});
 
 		// Comandos de erro

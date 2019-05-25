@@ -80,7 +80,7 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
-	public static String getUser(String sessionId) throws Exception{
+	public static String getUser(String sessionId) throws Exception {
 		try {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(
 					"select username from cookie where sessionId = '" + sessionId + "'"
@@ -88,7 +88,7 @@ public class DatabaseConnection {
 			if (resultSet.next()) {
 				return resultSet.getString(1);
 			} else {
-				throw new Exception();
+				throw new Exception("Username not found for given sessionID");
 			}
 		} finally {
 			conn.close ();

@@ -1,8 +1,10 @@
 package api;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 
+import database.DatabaseConnection;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -46,41 +48,43 @@ public class ServerSocketHandler {
 
 	@OnWebSocketMessage
 	public void onMessage(String message) throws IOException {
-		// command greetings seta o userid para o username
 		System.out.println("Message: " + message);
 		JSONObject jsonMessage = new JSONObject(message);
 
 		JSONObject response = new JSONObject();
 		if (userID == null) {
 			if (jsonMessage.get("command").equals("greetings")) {
-				this.userID = jsonMessage.get("sessionID").toString(); // trocar por peger um username do db
+				try {
+					this.userID = DatabaseConnection.getUser(jsonMessage.get("sessionID").toString());
 
-				// map this userID to this connection
-				ServerSocketHandler.sockets.put(this.userID, this);
+					// map this userID to this connection
+					ServerSocketHandler.sockets.put(this.userID, this);
 
-				response.put("status", "ok");
-				response.put("command", "greetings");
+					response.put("status", "ok");
+					response.put("command", "greetings");
+				} catch (SQLException e) {
+					response.put("status", "error");
+					response.put("errorMessage", "Internal server error");
+				} catch (Exception e) {
+					response.put("status", "error");
+					response.put("errorMessage", e.getMessage());
+				}
 			} else {
 				response.put("status", "error");
 				response.put("errorMessage", "Not logged in");
 			}
-			session.getRemote().sendString(response.toString());
 		} else {
 			// o usuário está logado, envia os dados que ele mandou ao Input
 			response = Input.process(jsonMessage);
-			sendClient(response.toString());
 		}
+		this.sendClient(response.toString());
 	}
 
-	private void sendClient(String str) {
-		try {
-			this.session.getRemote().sendString(str);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	private void sendClient(String message) throws IOException {
+		this.session.getRemote().sendString(message);
 	}
 
-	static void send(String userID, String message) {
+	static void send(String userID, String message) throws IOException {
 		// is the destination client connected?
 		if (ServerSocketHandler.sockets.containsKey(userID)) {
 			// get clientSession object from socketsMap
