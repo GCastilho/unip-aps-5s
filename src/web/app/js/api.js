@@ -19,12 +19,29 @@ $(() => {
         }
     };
 
+    ws.onopen = () => {
+        alert('test');
+        let greetings = {
+            command: "greetings",
+            sessionID: document.cookie.slice("SessionID=".length)
+        };
+        ws.send(JSON.stringify(greetings));
+    };
+
+    ws.onclose = function() {
+        alert("Closed!");
+    };
+
+    ws.onerror = function(err) {
+        alert("Error: " + err);
+    };
+
     ws.onmessage = (evt) => {
         alert("Message: " + evt.data);
         let data = evt.data;
         let localData = JSON.parse(localStorage.getItem('key'));
 
-        if (data.sessionId === document.cookie.slice(10)) {
+        if (data.sessionId === document.cookie.slice("SessionID=".length)) {
             localData.push({
                 side: "1",
                 message: data.message,
@@ -56,6 +73,7 @@ $(() => {
     //função de envio
     let send = () =>{
         if ($('#inputMessage').val() !== "") {
+
 
             ws.send(JSON.stringify({
                 sessionID: document.cookie.slice("SessionID=".length),
