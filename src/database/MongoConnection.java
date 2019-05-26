@@ -11,24 +11,39 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import static com.mongodb.client.model.Filters.gt;
 import static com.mongodb.client.model.Filters.regex;
 
 public class MongoConnection {
 	private final static String dbName = "message";
-
+	private final static int messageBatchSize = 10;
 	private static MongoClient mongoClient = new MongoClient("localhost", 27017);
 	private static MongoDatabase database = mongoClient.getDatabase(dbName);
 
 	public static void addMessage(Document message,String sender, String receiver){
-
+		//
 		database.getCollection(alfabeticalOrder(sender,receiver)).insertOne(message);
 	}
 
 	public static List<Document> getChatMessageList (String sender, String receiver){
 		//the -1 on sort means that the get order is desc
-		return	database.getCollection(alfabeticalOrder(sender,receiver)).find().
-						sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
+		return	database.getCollection(alfabeticalOrder(sender,receiver)).
+				find().
+				sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
+	}
 
+	public static List<Document> getMessageList (String sender, String receiver){
+		//the -1 on sort means that the get order is desc
+		return	database.getCollection(alfabeticalOrder(sender,receiver)).
+				find().limit(messageBatchSize).
+				sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
+	}
+
+	public static List<Document> getNextMessageList (Document doc){
+		//the -1 on sort means that the get order is desc
+		return	database.getCollection(alfabeticalOrder(doc.getString("sender"),doc.getString("receiver"))).
+				find ((gt("_id",doc.getObjectId("_id")))).limit(messageBatchSize).
+				sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
 	}
 
 	public static void addChat(String user1, String user2){

@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class DatabaseConnection {
 	private static Connection conn;
@@ -94,8 +96,20 @@ public class DatabaseConnection {
 			conn.close ();
 		}
 	}
+	public static List getUserList() throws Exception {
+		try {
+			List<String> list = new ArrayList<>();
+			ResultSet rs = getConnection().createStatement().executeQuery(
+					"select username from credential"
+			);
+			while (rs.next()) list.add(rs.getString(1));
 
-
+			//the List can later be cast into other List
+			return list;
+		} finally {
+			conn.close();
+		}
+	}
 	private static String getSHA512(String input) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");
 		digest.reset();
