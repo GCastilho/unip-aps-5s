@@ -4,8 +4,9 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-public class Http {
+class Http {
 	private static void send(HttpExchange httpExchange, File file) {
 		try {
 			if (!file.exists()) throw new IOException("File '" + file + "' not found!");
@@ -37,26 +38,35 @@ public class Http {
 		}
 	}
 
-	public static void send401(HttpExchange httpExchange) {
+	static String getCookie(String cookieName, List<String> cookies) {
+		String cookie = null;
+		for (String cookieString : cookies) {
+			String[] tokens = cookieString.split("\\s*;\\s*");
+			for (String token : tokens) {
+				if (token.startsWith(cookieName) && token.charAt(cookieName.length()) == '=') {
+					cookie = token.substring(cookieName.length() + 1);
+				}
+			}
+		}
+		return cookie;
+	}
+
+	static void send401(HttpExchange httpExchange) {
 		String response = "401 Unauthorized";
 		send(httpExchange, response, 401);
 	}
 
-	public static void send404(HttpExchange httpExchange) {
+	static void send404(HttpExchange httpExchange) {
 		String response = "404 Not Found";
 		send(httpExchange, response, 404);
 	}
 
-	public static void send500(HttpExchange httpExchange) {
+	static void send500(HttpExchange httpExchange) {
 		String response = "500 Internal Server Error";
 		send(httpExchange, response, 500);
 	}
 
-	public static void sendJson(HttpExchange httpExchange, String json) {
-		send(httpExchange, json, 200);
-	}
-
-	public static void sendHtml(HttpExchange httpExchange, String path) {
+	static void sendHtml(HttpExchange httpExchange, String path) {
 		try {
 			File root = new File(new File(".").getCanonicalPath() + "/src/web");
 			File file = new File(root + path).getCanonicalFile();
@@ -69,7 +79,7 @@ public class Http {
 		}
 	}
 
-	public static void sendRaw(HttpExchange httpExchange, String path) {
+	static void sendRaw(HttpExchange httpExchange, String path) {
 		try {
 			File root = new File(new File(".").getCanonicalPath() + "/src/web");
 			File file = new File(root + path).getCanonicalFile();
@@ -81,7 +91,7 @@ public class Http {
 		}
 	}
 
-	public static String getPOST(InputStream httpBody) throws IOException {
+	static String getPOST(InputStream httpBody) throws IOException {
 		InputStreamReader is =  new InputStreamReader(httpBody, StandardCharsets.UTF_8);
 		BufferedReader br = new BufferedReader(is);
 		StringBuilder buf = new StringBuilder(512);
