@@ -29,7 +29,7 @@ public class Aps_5s {
 			@Override
 			public void configure(WebSocketServletFactory factory) {
 				factory.register(api.ServerSocketHandler.class);
-				factory.getPolicy().setIdleTimeout(0);  //(36000000);   //10 Minutes
+				factory.getPolicy().setIdleTimeout(36000000);  //(36000000);   //10 Minutes
 			}
 		};
 		api_server.setHandler(wsHandler);

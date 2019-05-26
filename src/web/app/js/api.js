@@ -22,7 +22,7 @@ $(() => {
     ws.onopen = () => {
         let greetings = {
             command: "greetings",
-            sessionID: document.cookie.slice("SessionID=".length)
+            sessionID: document.cookie.slice("sessionID=".length)
         };
         ws.send(JSON.stringify(greetings));
     };
@@ -38,15 +38,15 @@ $(() => {
     ws.onmessage = (evt) => {
         let data = evt.data;
 
-        if ((data.indexOf('{') === -1) && (data !== "Hello Webbrowser")) {
+        if (data.indexOf('{') === -1) {
             $('.chat').html(() => {
                 messageLeft({
                     message: data,
-                    time: (new Date()).getTime()
+                    timestamp: (new Date()).getTime()
                 });
             });
         } else {
-            console.log("Message: " + data);
+            console.log("Message: " + (JSON.parse(data)).status);
         }
     };
 
@@ -55,7 +55,7 @@ $(() => {
         if ($('#inputMessage').val() !== "") {
             let data = {
                 command: "send",
-                receiver: "root",
+                receiver: "user",
                 message: $('#inputMessage').val(),
                 timestamp: (new Date()).getTime()
             }

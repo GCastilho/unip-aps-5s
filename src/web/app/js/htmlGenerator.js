@@ -7,7 +7,7 @@ let messageRight = (data) => {
             "<div class=\"msg-left-sub\">" +
             "<div class=\"msg-desc\">" + data.message +
             "</div>" +
-            "<small>"+data.time+"</small>" +
+            "<small>"+(new Date(data.timestamp)).getHours()+":"+(new Date(data.timestamp)).getMinutes()+"</small>" +
             "</div>" +
             "</li>");
 
@@ -23,7 +23,7 @@ let messageLeft = (data) => {
             "<div class=\"msg-left-sub\">" +
             "<div class=\"msg-desc\">" + data.message +
             "</div>" +
-            "<small>"+data.time+"</small>" +
+            "<small>"+(new Date(data.timestamp)).getHours()+":"+(new Date(data.timestamp)).getMinutes()+"</small>" +
             "</div>" +
             "</li>");
 

@@ -39,11 +39,6 @@ public class ServerSocketHandler {
 		this.session = session;
 
 		System.out.println("Connect: " + session.getRemoteAddress().getAddress());
-		try {
-			session.getRemote().sendString("Hello Webbrowser");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 	}
 
