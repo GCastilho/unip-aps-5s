@@ -50,6 +50,10 @@ $(() => {
         }
     };
 
+    $("ul").click((e) => {
+        alert('user :'+$(e.target).attr("user"));
+    });
+
     //função de envio
     let send = () =>{
         if ($('#inputMessage').val() !== "") {
