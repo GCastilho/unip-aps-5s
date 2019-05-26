@@ -7,20 +7,19 @@ $(() => {
         if (localStorage.getItem('key') === null) {
             $.getJSON("js/data.json", (data) => {
                 for(let i = 0; i < data.length; i++) {
-                    chatGenerator(data[i]);
+                    messageLeft(data[i]);
                 }
             });
         } else {
             let buffer = JSON.parse(localStorage.getItem('key'));
 
             for(let i = 0; i < buffer.length; i++) {
-                chatGenerator(buffer[i]);
+                messageLeft(buffer[i]);
             }
         }
     };
 
     ws.onopen = () => {
-        alert('test');
         let greetings = {
             command: "greetings",
             sessionID: document.cookie.slice("SessionID=".length)
@@ -37,39 +36,31 @@ $(() => {
     };
 
     ws.onmessage = (evt) => {
-        console.log("Message: " + evt.data);
-        let data = JSON.parse(evt.data);
-        console.log(data.receiver);
-        console.log((new Date).getTime());
-        if (data.receiver === undefined){
-        } else if (data.receiver === document.cookie.slice("SessionID=".length)) {
+        let data = evt.data;
+
+        if ((data.indexOf('{') === -1) && (data !== "Hello Webbrowser")) {
             $('.chat').html(() => {
-                chatGenerator({
-                    side: "1",
-                    message: data.message,
-                    time: data.timestamp
+                messageLeft({
+                    message: data,
+                    time: (new Date()).getTime()
                 });
             });
         } else {
-            $('.chat').html(() => {
-                chatGenerator({
-                    side: "2",
-                    message: data.message,
-                    time: data.timestamp
-                });
-            });
+            console.log("Message: " + data);
         }
     };
 
     //função de envio
     let send = () =>{
         if ($('#inputMessage').val() !== "") {
-            ws.send(JSON.stringify({
+            let data = {
                 command: "send",
-                receiver: document.cookie.slice("sessionID=".length),
+                receiver: "root",
                 message: $('#inputMessage').val(),
                 timestamp: (new Date()).getTime()
-            }));
+            }
+            ws.send(JSON.stringify(data));
+            messageRight(data);
             $('#inputMessage').val('');
         }
     };
