@@ -1,0 +1,14 @@
+{"_id":{"$oid":"5ce9e93f1d7b2452621d2164"},"sender":"user","receiver":"gabriel","message":"mensagem 1"}
+{"_id":{"$oid":"5ce9e95b21a99a60b8d8f27a"},"sender":"user","receiver":"gabriel","message":"mensagem 2"}
+{"_id":{"$oid":"5ce9e95c21a99a60b8d8f27c"},"sender":"user","receiver":"gabriel","message":"mensagem 3"}
+{"_id":{"$oid":"5ce9e95d21a99a60b8d8f27e"},"sender":"user","receiver":"gabriel","message":"mensagem 4"}
+{"_id":{"$oid":"5ce9ea3dea614645413070f2"},"sender":"user","receiver":"gabriel","message":"mensagem 5"}
+{"_id":{"$oid":"5ce9eabae1c2852564574695"},"sender":"user","receiver":"gabriel","message":"mensagem 6"}
+{"_id":{"$oid":"5ce9ead311c6143464a2507a"},"sender":"user","receiver":"gabriel","message":"mensagem 7"}
+{"_id":{"$oid":"5ce9eaf50b3d2c60175c97f0"},"sender":"user","receiver":"gabriel","message":"mensagem 8"}
+{"_id":{"$oid":"5ce9ecb0c447592ab54fe063"},"sender":"user","receiver":"gabriel","message":"mensagem 9"}
+{"_id":{"$oid":"5ce9edaeedea336ab20740ac"},"sender":"user","receiver":"gabriel","message":"mensagem 10"}
+{"_id":{"$oid":"5ce9ee118ee6d96fdd296aac"},"sender":"user","receiver":"gabriel","message":"mensagem 11"}
+{"_id":{"$oid":"5ce9ef519a88735f3b48fa94"},"sender":"gabriel","receiver":"user","message":"estou com fome"}
+{"_id":{"$oid":"5ce9ef794b9d2970ca5cce1b"},"sender":"gabriel","receiver":"user","message":"estou com fome"}
+{"_id":{"$oid":"5ce9efb4e4211f24c6725c78"},"sender":"gabriel","receiver":"user","message":"quero bolo"}
