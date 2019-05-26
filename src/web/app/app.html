@@ -9,176 +9,177 @@
     <link rel="stylesheet" href="css/message.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-    <script src="js/scripts.js" type="application/javascript"></script>
+    <script src="js/scrollbarConfig.js" type="application/javascript"></script>
+    <script src="js/htmlGenerator.js" type="application/javascript"></script>
+    <script src="js/api.js" type="application/javascript"></script>
     <title>chat</title>
 </head>
 <body>
-<div class="main-section">
-    <div class="head-section">
-        <div class="headLeft-section">
-            <div class="headLeft-sub">
-                <label>
-                    <h3>Online</h3>
-                </label>
-                <button id="test"> apagar localstorage</i> </button>
+    <div class="main-section">
+        <div class="head-section">
+            <div class="headLeft-section">
+                <div class="headLeft-sub">
+                    <label>
+                        <h3>Online</h3>
+                    </label>
+                </div>
+            </div>
+            <div class="headRight-section">
+                <div class="headRight-sub">
+                    <h3>Lajy Ion</h3>
+                    <small>Lorem ipsum dolor sit amet...</small>
+                </div>
             </div>
         </div>
-        <div class="headRight-section">
-            <div class="headRight-sub">
-                <h3>Lajy Ion</h3>
-                <small>Lorem ipsum dolor sit amet...</small>
-            </div>
-        </div>
-    </div>
-    <div class="body-section">
-        <div class="left-section mCustomScrollbar" data-mcs-theme="minimal-dark">
-            <ul>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <i class="fa fa-circle"></i>
-                            <img src="img/man01.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">05:30 am</small>
-                            <h5>Luis Yankee</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <i class="fa fa-circle"></i>
-                            <img src="img/man02.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">3 day</small>
-                            <h5>Joi Chak</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li class="active">
-                    <div class="chatList">
-                        <div class="img">
-                            <img src="img/man01.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">4 day</small>
-                            <h5>Lajy Ion</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <img src="img/man04.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">18 day</small>
-                            <h5>Lod Kine</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <i class="fa fa-circle"></i>
-                            <img src="img/man01.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">11:50 am</small>
-                            <h5>Nik Minaj</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <img src="img/man02.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">20 day</small>
-                            <h5>Win Sina</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <img src="img/man03.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">18 day</small>
-                            <h5>Jack Clerk</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <img src="img/man02.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">20 day</small>
-                            <h5>Win Sina</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <div class="chatList">
-                        <div class="img">
-                            <img src="img/man03.png">
-                        </div>
-                        <div class="desc">
-                            <small class="time">18 day</small>
-                            <h5>Jack Clerk</h5>
-                            <small>Lorem ipsum dolor sit amet...</small>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="right-section">
-            <div class="message mCustomScrollbar" data-mcs-theme="minimal-dark">
-                <ul class="chat">
-                    <li class="msg-left">
-                        <div class="msg-left-sub">
-                            <div class="msg-desc">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua.
+        <div class="body-section">
+            <div class="left-section mCustomScrollbar" data-mcs-theme="minimal-dark">
+                <ul>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <i class="fa fa-circle"></i>
+                                <img src="img/man01.png">
                             </div>
-                            <small>05:01 am</small>
+                            <div class="desc">
+                                <small class="time">05:30 am</small>
+                                <h5>Luis Yankee</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
                         </div>
                     </li>
-                    <li class="msg-right">
-                        <div class="msg-left-sub">
-                            <div class="msg-desc">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                                tempor incididunt ut labore et dolore magna aliqua.
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <i class="fa fa-circle"></i>
+                                <img src="img/man02.png">
                             </div>
-                            <small>05:02 am</small>
+                            <div class="desc">
+                                <small class="time">3 day</small>
+                                <h5>Joi Chak</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
                         </div>
                     </li>
-                    <li class="msg-day"><small>Quarta</small></li>
-                    <li class="msg-left">
-                        <div class="msg-left-sub">
-                            <div class="msg-desc">
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit
+                    <li class="active">
+                        <div class="chatList">
+                            <div class="img">
+                                <img src="img/man01.png">
                             </div>
-                            <small>05:03 am</small>
+                            <div class="desc">
+                                <small class="time">4 day</small>
+                                <h5>Lajy Ion</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <img src="img/man04.png">
+                            </div>
+                            <div class="desc">
+                                <small class="time">18 day</small>
+                                <h5>Lod Kine</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <i class="fa fa-circle"></i>
+                                <img src="img/man01.png">
+                            </div>
+                            <div class="desc">
+                                <small class="time">11:50 am</small>
+                                <h5>Nik Minaj</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <img src="img/man02.png">
+                            </div>
+                            <div class="desc">
+                                <small class="time">20 day</small>
+                                <h5>Win Sina</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <img src="img/man03.png">
+                            </div>
+                            <div class="desc">
+                                <small class="time">18 day</small>
+                                <h5>Jack Clerk</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <img src="img/man02.png">
+                            </div>
+                            <div class="desc">
+                                <small class="time">20 day</small>
+                                <h5>Win Sina</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="chatList">
+                            <div class="img">
+                                <img src="img/man03.png">
+                            </div>
+                            <div class="desc">
+                                <small class="time">18 day</small>
+                                <h5>Jack Clerk</h5>
+                                <small>Lorem ipsum dolor sit amet...</small>
+                            </div>
                         </div>
                     </li>
                 </ul>
             </div>
-            <div class="right-section-bottom">
+            <div class="right-section">
+                <div class="message mCustomScrollbar" data-mcs-theme="minimal-dark">
+                    <ul class="chat">
+                        <li class="msg-left">
+                            <div class="msg-left-sub">
+                                <div class="msg-desc">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                    tempor incididunt ut labore et dolore magna aliqua.
+                                </div>
+                                <small>05:01 am</small>
+                            </div>
+                        </li>
+                        <li class="msg-right">
+                            <div class="msg-left-sub">
+                                <div class="msg-desc">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                                    tempor incididunt ut labore et dolore magna aliqua.
+                                </div>
+                                <small>05:02 am</small>
+                            </div>
+                        </li>
+                        <li class="msg-day"><small>Quarta</small></li>
+                        <li class="msg-left">
+                            <div class="msg-left-sub">
+                                <div class="msg-desc">
+                                    Lorem ipsum dolor sit amet, consectetur adipisicing elit
+                                </div>
+                                <small>05:03 am</small>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="right-section-bottom">
                     <div class="upload-btn">
                         <button class="btn" ><i class="fa fa-photo"></i></button>
                         <input class="fa-paperclip" type="file" name="" />
@@ -187,12 +188,9 @@
                         <input id="inputMessage" type="text" name="inputMessage" placeholder="type here..." autofocus>
                     </label>
                     <button type="submit" class="btn-send"><i class="fa fa-send"></i></button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-<!-- custom scrollbar plugin -->
-
 </body>
 </html>
