@@ -90,22 +90,22 @@ body{
 .left-section ul li.active .desc .time{
     color: #fff;
 }
-.left-section .chatList{
+.left-section .listContainer{
     overflow: hidden;
     padding-bottom: auto;
 }
-.left-section .chatList .desc{
+.left-section .listContainer .desc{
     width: calc(100% - 60px);
     float: left;
     position: relative;
 }
-.left-section .chatList .desc h5{
+.left-section .listContainer .desc h5{
     margin-top: 6px;
     margin-bottom: 13px;
     margin-left: 40%;
     line-height: 5px;
 }
-.left-section .chatList .desc .time{
+.left-section .listContainer .desc .time{
     position: absolute;
     right: 15px;
     color: #c1c1c1;

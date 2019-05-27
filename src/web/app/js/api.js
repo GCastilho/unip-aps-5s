@@ -4,27 +4,15 @@ $(() => {
 
     //função para carregar as mensagens ao iniciar a pagina
     window.onload = () => {
-        if (localStorage.getItem('key') === null) {
-            $.getJSON("js/data.json", (data) => {
-                for(let i = 0; i < data.length; i++) {
-                    messageLeft(data[i]);
-                }
-            });
-        } else {
-            let buffer = JSON.parse(localStorage.getItem('key'));
 
-            for(let i = 0; i < buffer.length; i++) {
-                messageLeft(buffer[i]);
-            }
-        }
     };
 
     ws.onopen = () => {
-        let greetings = {
+        ws.send(JSON.stringify({
             command: "greetings",
             sessionID: document.cookie.slice("sessionID=".length)
-        };
-        ws.send(JSON.stringify(greetings));
+        }));
+        ws.send(JSON.stringify({command: "getUserList"}));
     };
 
     ws.onclose = function() {
@@ -36,23 +24,31 @@ $(() => {
     };
 
     ws.onmessage = (evt) => {
-        let data = evt.data;
 
-        if (data.indexOf('{') === -1) {
+        if (evt.data.indexOf('{') === -1) {
             $('.chat').html(() => {
                 messageLeft({
-                    message: data,
+                    message: evt.data,
                     timestamp: (new Date()).getTime()
                 });
             });
         } else {
-            console.log("Message: " + (JSON.parse(data)).status);
+            let data = JSON.parse(evt.data);
+            if (data.status === 'ok') {
+                console.log('Mensagem enviada');
+            } else if (data.status === 'error') {
+                console.log('erro');
+                console.log(data);
+            } else {
+                console.log(data);
+            }
         }
     };
 
     $('ul').click((e) => {
-        alert('user :'+$(e.target).attr('user'));
+        $('.headRight-title').text($(e.target).attr('user'));
         $('.chat').empty();
+        //messageHistory(); função em implementação
     });
 
     //função de envio
