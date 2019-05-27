@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import static com.mongodb.client.model.Filters.gt;
+import static com.mongodb.client.model.Filters.lt;
 import static com.mongodb.client.model.Filters.regex;
 
 public class MongoConnection {
@@ -42,7 +42,7 @@ public class MongoConnection {
 	public static List<Document> getNextMessageList (Document doc){
 		//the -1 on sort means that the get order is desc
 		return	database.getCollection(alfabeticalOrder(doc.getString("sender"),doc.getString("receiver"))).
-				find ((gt("_id",doc.getObjectId("_id")))).limit(messageBatchSize).
+				find ((lt("_id",doc.getObjectId("_id")))).limit(messageBatchSize).
 				sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
 	}
 

@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Api {
@@ -22,14 +23,26 @@ public class Api {
 		});
 
 		commands.put("send", () -> {
+			String sender = data.getString("sender");
+			String receiver = data.getString("receiver");
+			String message =   data.getString("message");
 			try {
-				ServerSocketHandler.send(data.getString("receiver"), data.getString("message"));
+				ServerSocketHandler.send(receiver, message);
+
+				Document messageDoc = new Document();
+				messageDoc.put("sender", sender);
+				messageDoc.put("receiver", receiver);
+				messageDoc.put("message", message);
+				messageDoc.put("time", data.getString("time"));
+
+				MongoConnection.addMessage(messageDoc, sender, receiver);
+
 				response.put("status", "ok");
 				response.put("sended", true);
 			} catch (IOException e) {
 				e.printStackTrace();
 				response.put("status", "error");
-				response.put("info", "Internal server error");
+				response.put("errorMessage", "Internal server error");
 			}
 		});
 
