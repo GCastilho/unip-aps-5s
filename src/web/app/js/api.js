@@ -50,8 +50,9 @@ $(() => {
         }
     };
 
-    $("ul").click((e) => {
-        alert('user :'+$(e.target).attr("user"));
+    $('ul').click((e) => {
+        alert('user :'+$(e.target).attr('user'));
+        $('.chat').empty();
     });
 
     //função de envio
