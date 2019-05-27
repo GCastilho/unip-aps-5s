@@ -26,38 +26,44 @@ $(() => {
     ws.onmessage = (evt) => {
         try {
             let data = JSON.parse(evt.data);
-            switch (data.status) {
-	            case 'ok':
-	            	switch (data.command) {
-			            //Quando vc envia qqer comando, o server responde um comando 'response'
-			            case 'response':
-				            switch (data.requested) {
-					            case 'send':
-						            if (data.sended) {
-							            console.log('Mensagem enviada');
-						            } else {
-							            console.log('Erro ao enviar mensagem');
-						            }
-						            break;
-					            case 'getUserList':
-						            console.log('Vc requisitou a user list, tem q implementar isso');
-						        break;
-				            }
-				            break;
-			            case 'newMessage':
-				            console.log("implemente algo que lide com novas mensagens!!!");
-				            break;
-			            default:
-				            console.log('Unrecognized command response: ' + data.command);
-				            break;
+            if (data.status === 'ok') {
+	            let command = new Map();
+
+	            command.set('response', () => {
+		            let requested = new Map();
+
+		            requested.set('send', () => {
+			            if (data.sended) {
+				            console.log('Mensagem enviada');
+			            } else {
+				            console.log('Erro ao enviar mensagem');
+			            }
+		            });
+
+		            requested.set('getUserList', () => {
+			            console.log('Vc requisitou a user list, tem q implementar isso');
+		            });
+
+		            if (requested.has(data.requested)) {
+			            requested.get(data.requested);
+		            } else {
+			            console.log('Unrecognized requested response: ' + data.requested);
 		            }
-		            break;
-	            case 'error':
-		            console.log("Server has returned an error: " + data.info);
-		            break;
-	            default:
-		            console.log("Bad response: " + data);
-		            break;
+	            });
+
+	            command.set('newMessage', () => {
+		            console.log("implemente algo que lide com novas mensagens!!!");
+	            });
+
+	            if (command.has(data.command)) {
+		            command.get(data.command);
+	            }  else {
+		            console.log('Unrecognized command response: ' + data.command);
+	            }
+            } else if (data.status === 'error') {
+	            console.log("Server has returned an error: " + data.info);
+            } else {
+	            console.log("Bad response: " + data);
             }
         } catch (e) {
             console.log("error while parsing input: " + evt.data);
