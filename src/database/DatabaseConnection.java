@@ -96,7 +96,7 @@ public class DatabaseConnection {
 			conn.close ();
 		}
 	}
-	public static List getUserList() throws Exception {
+	public static List<String> getUserList() throws Exception {
 		try {
 			List<String> list = new ArrayList<>();
 			ResultSet rs = getConnection().createStatement().executeQuery(

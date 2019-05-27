@@ -1,18 +1,17 @@
 package api;
 
-import com.mongodb.*;
-import database.MongoConnection;
 import org.bson.Document;
 import org.json.JSONObject;
-
+import org.json.JSONArray;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class Api {
-	public static JSONObject process(JSONObject data) {
+import database.DatabaseConnection;
+import database.MongoConnection;
+
+class Api {
+	static JSONObject process(JSONObject data) {
 		JSONObject response = new JSONObject();
 
 		Map<String, Runnable> commands = new HashMap<>();
@@ -27,7 +26,11 @@ public class Api {
 			String receiver = data.getString("receiver");
 			String message =   data.getString("message");
 			try {
-				ServerSocketHandler.send(receiver, message);
+				JSONObject mail = new JSONObject();
+				mail.put("status", "ok");
+				mail.put("command", "newMessage");
+				mail.put("message", message);
+				ServerSocketHandler.send(receiver, mail.toString());
 
 				Document messageDoc = new Document();
 				messageDoc.put("sender", sender);
@@ -38,12 +41,28 @@ public class Api {
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 
 				response.put("status", "ok");
+				response.put("command", "response");
 				response.put("sended", true);
 			} catch (IOException e) {
 				e.printStackTrace();
-				response.put("status", "error");
-				response.put("errorMessage", "Internal server error");
+				commands.get("internalServerError").run();
 			}
+		});
+
+		commands.put("getUserList", () -> {
+			try {
+				response.put("status", "ok");
+				response.put("command", "response");
+				response.put("userList", new JSONArray(DatabaseConnection.getUserList()));
+			} catch (Exception e) {
+				e.printStackTrace();
+				commands.get("internalServerError").run();
+			}
+		});
+
+		commands.put("getMessages", () -> {
+			response.put("status", "error");
+			response.put("info", "command not implemented");
 		});
 
 		// Comandos de erro
@@ -55,6 +74,11 @@ public class Api {
 		commands.put("badRequest", () -> {
 			response.put("status", "error");
 			response.put("info", "Bad request");
+		});
+
+		commands.put("internalServerError", () -> {
+			response.put("status", "error");
+			response.put("info", "Internal server error");
 		});
 
 		if (data.has("command")) {
