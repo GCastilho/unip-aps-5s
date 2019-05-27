@@ -24,24 +24,43 @@ $(() => {
     };
 
     ws.onmessage = (evt) => {
-
-        if (evt.data.indexOf('{') === -1) {
-            $('.chat').html(() => {
-                messageLeft({
-                    message: evt.data,
-                    timestamp: (new Date()).getTime()
-                });
-            });
-        } else {
+        try {
             let data = JSON.parse(evt.data);
-            if (data.status === 'ok') {
-                console.log('Mensagem enviada');
-            } else if (data.status === 'error') {
-                console.log('erro');
-                console.log(data);
-            } else {
-                console.log(data);
+            switch (data.status) {
+	            case 'ok':
+	            	switch (data.command) {
+			            //Quando vc envia qqer comando, o server responde um comando 'response'
+			            case 'response':
+				            switch (data.requested) {
+					            case 'send':
+						            if (data.sended) {
+							            console.log('Mensagem enviada');
+						            } else {
+							            console.log('Erro ao enviar mensagem');
+						            }
+						            break;
+					            case 'getUserList':
+						            console.log('Vc requisitou a user list, tem q implementar isso');
+						        break;
+				            }
+				            break;
+			            case 'newMessage':
+				            console.log("implemente algo que lide com novas mensagens!!!");
+				            break;
+			            default:
+				            console.log('Unrecognized command response: ' + data.command);
+				            break;
+		            }
+		            break;
+	            case 'error':
+		            console.log("Server has returned an error: " + data.info);
+		            break;
+	            default:
+		            console.log("Bad response: " + data);
+		            break;
             }
+        } catch (e) {
+            console.log("error while parsing input: " + evt.data);
         }
     };
 
