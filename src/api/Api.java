@@ -34,7 +34,6 @@ class Api {
 
 				Document messageDoc = new Document();
 				messageDoc.put("sender", sender);
-				messageDoc.put("receiver", receiver);
 				messageDoc.put("message", message);
 				messageDoc.put("timestamp", data.getString("timestamp"));
 

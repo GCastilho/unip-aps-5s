@@ -36,11 +36,12 @@ public class MongoConnection {
 				sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
 	}
 
-	public static List<Document> getNextMessageBatch (Document doc){
+	public static List<Document> getNextMessageBatch (String id, String sender, String receiver){
 		//returns a list of Documents (maps
+		//must receive the _id of the last message,as well the sender e receiver
 		//the content can be accessed travelling the list and using the getString(key) method
-		return	database.getCollection(alfabeticalOrder(doc.getString("sender"),doc.getString("receiver"))).
-				find ((lt("_id",doc.getObjectId("_id")))).limit(messageBatchSize).
+		return	database.getCollection(alfabeticalOrder(sender, receiver)).
+				find ((lt("_id",new ObjectId(id)))).limit(messageBatchSize).
 				sort(new BasicDBObject("_id",-1)).into(new ArrayList<>());
 	}
 
