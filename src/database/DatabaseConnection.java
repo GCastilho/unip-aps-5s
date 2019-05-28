@@ -58,17 +58,19 @@ public class DatabaseConnection {
 		}
 	}
 
-	public static String updateCookie(String username, String sessionId) throws Exception {
+	public static void updateCookie(String sessionId) throws Exception {
 		try {
-			getConnection().createStatement().executeQuery(
-					"delete from cookie where sessionId ='" + sessionId + "'"
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"update cookie set timestamp = ? where sessionID = ?"
 			);
+			preparedStatement.setLong(1, new Date().getTime());
+			preparedStatement.setString(2, sessionId);
+
+			preparedStatement.execute();
 		} finally {
 			conn.close();
 		}
-		return makeCookie(username, sessionId);
 	}
-
 
 	public static boolean validCookie(String sessionId) throws Exception {
 		try {
@@ -76,7 +78,7 @@ public class DatabaseConnection {
 					"select timestamp from cookie where sessionId = '"+sessionId+"'"
 			);
 
-			//verify if cookie timestamp is bigger than 10 minutes (in miliseconds)
+			//verify if cookie timestamp is bigger than 10 minutes (in milliseconds)
 			return resultSet.next() && resultSet.getLong(1) > new Date().getTime()-600000;
 		} finally {
 			conn.close();
