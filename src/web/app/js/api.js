@@ -24,9 +24,9 @@ $(() => {
     };
 
     ws.onmessage = (evt) => {
-        try {
+	    try {
             let data = JSON.parse(evt.data);
-            if (data.status === 'ok') {
+		    if (data.status === 'ok') {
 	            let command = new Map();
 
 	            command.set('response', () => {
@@ -40,12 +40,16 @@ $(() => {
 			            }
 		            });
 
-		            requested.set('getUserList', () => {
-			            console.log('Vc requisitou a user list, tem q implementar isso');
+		            requested.set('greetings', () => {
+		            	console.log("Greetings ok!");
 		            });
 
-		            if (requested.has(data.requested)) {
-			            requested.get(data.requested);
+		            requested.set('getUserList', () => {
+			            data.userList.forEach(user => chatList(user));
+		            });
+
+		            if (requested.has(data.response)) {
+			            requested.get(data.response)();
 		            } else {
 			            console.log('Unrecognized requested response: ' + data.requested);
 		            }
@@ -56,7 +60,7 @@ $(() => {
 	            });
 
 	            if (command.has(data.command)) {
-		            command.get(data.command);
+		            command.get(data.command)();
 	            }  else {
 		            console.log('Unrecognized command response: ' + data.command);
 	            }

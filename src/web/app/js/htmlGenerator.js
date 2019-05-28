@@ -33,7 +33,6 @@ let messageLeft = (data) => {
 
 let chatList = (data) => {
     $(() => {
-        console.log(data);
         $('.chatList').append(
             '<li user="'+data+'">' +
             '<div user="'+data+'" class="listContainer">' +
