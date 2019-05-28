@@ -60,12 +60,15 @@ public class ServerSocketHandler {
 					ServerSocketHandler.sockets.put(this.userID, this);
 
 					response.put("status", "ok");
-					response.put("info", "greetings");
+					response.put("command", "response");
+					response.put("response", "greetings");
 				} catch (SQLException e) {
 					response.put("status", "error");
+					response.put("command", "response");
 					response.put("info", "Internal server error");
 				} catch (Exception e) {
 					response.put("status", "error");
+					response.put("command", "response");
 					response.put("info", e.getMessage());
 				}
 			} else {

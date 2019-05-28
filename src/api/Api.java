@@ -53,6 +53,7 @@ class Api {
 			try {
 				response.put("status", "ok");
 				response.put("command", "response");
+				response.put("response", "getUserList");
 				response.put("userList", new JSONArray(DatabaseConnection.getUserList()));
 			} catch (Exception e) {
 				e.printStackTrace();
