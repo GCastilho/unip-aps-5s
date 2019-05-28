@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import database.DatabaseConnection;
@@ -22,7 +23,7 @@ class Api {
 		});
 
 		commands.put("send", () -> {
-			String sender = data.getString("sender");
+			String sender = data.getString("userID");
 			String receiver = data.getString("receiver");
 			String message =   data.getString("message");
 			try {
@@ -35,7 +36,7 @@ class Api {
 				Document messageDoc = new Document();
 				messageDoc.put("sender", sender);
 				messageDoc.put("message", message);
-				messageDoc.put("timestamp", data.getString("timestamp"));
+				messageDoc.put("timestamp", data.get("timestamp").toString());
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 
@@ -60,8 +61,21 @@ class Api {
 		});
 
 		commands.put("getMessages", () -> {
-			response.put("status", "error");
-			response.put("info", "command not implemented");
+			response.put("status", "ok");
+			response.put("command", "response");
+			response.put("response", "getMessages");
+			String sender = data.getString("userID");
+			String receiver = data.getString("receiver");
+			List<Document> messageBatch;
+			if (data.has("lastID")) {
+				String lastID = data.getString("lastID");
+				messageBatch = MongoConnection.getNextMessageBatch(lastID, sender, receiver);
+			} else {
+				messageBatch = MongoConnection.getFirstMessageBatch(sender, receiver);
+			}
+			JSONArray messageList = new JSONArray();
+			messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
+			response.put("messageList", messageList);
 		});
 
 		// Comandos de erro
