@@ -51,8 +51,10 @@ public class ServerSocketHandler {
 		if (userID == null) {
 			if (jsonMessage.get("command").equals("greetings")) {
 				try {
-					this.userID = DatabaseConnection.getUser(jsonMessage.getString("sessionID"));
-					this.sessionID = jsonMessage.getString("sessionID");
+					String sessionId = jsonMessage.getString("sessionID");
+					sessionId = sessionId.substring(sessionId.length()-128);
+					this.userID = DatabaseConnection.getUser(sessionId);
+					this.sessionID = sessionId;
 
 					// map this userID to this connection
 					ServerSocketHandler.sockets.put(this.userID, this);
