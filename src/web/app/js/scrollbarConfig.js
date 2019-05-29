@@ -1,10 +1,20 @@
 $(() => {
     //configurações da scrollbar
     $('.left-section, .message').mCustomScrollbar({
-        scrollInertia: 85
+        scrollInertia: 85,
+        callbacks:{
+            onTotalScrollBack:function(){
+                ws.send(JSON.stringify({
+                    command: 'getMessages',
+                    receiver,
+                    lastID: messageId
+                }));
+            }
+        }
     });
     $('.left-section').mCustomScrollbar({
-        height: 0
+        height: 0,
+
     });
 });
 

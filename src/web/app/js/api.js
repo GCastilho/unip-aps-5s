@@ -4,6 +4,8 @@ var ws = new WebSocket("ws://"+window.location.hostname+":8080/");
 
 var me;
 
+var messageId;
+
 window.onload = () => {
 	me = localStorage.getItem('username');
 
@@ -30,6 +32,7 @@ function send() {
 		ws.send(JSON.stringify(data));
 		data.sender = me;
 		putMessage(data, true);
+		scrollUpdate();
 		$('#inputMessage').val('');
 	}
 };
@@ -76,7 +79,10 @@ ws.onmessage = (evt) => {
 				});
 
 				requested.set('getMessages', () => {
-					data.messageList.forEach(message => putMessage(message));
+					data.messageList.forEach(message => {
+						messageId = message._id.$oid;
+						console.log(messageId);
+						putMessage(message)});
 				});
 
 				requested.set('send', () => {
@@ -92,6 +98,7 @@ ws.onmessage = (evt) => {
 
 			command.set('newMessage', () => {
 				putMessage(data, true);
+				scrollUpdate();
 			});
 
 			if (command.has(data.command)) {

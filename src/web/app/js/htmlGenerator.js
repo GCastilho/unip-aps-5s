@@ -7,7 +7,7 @@ function putMessage(data, newMessage = false) {
 	let htm = '<div class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message + '</div>' +
 		'<small>' +
-		(new Date(data.timestamp)).getHours()+':'+(new Date(data.timestamp)).getMinutes() +
+		(new Date(data.timestamp)).getHours()+':'+String((new Date(data.timestamp)).getMinutes()).padStart(2, '0') +
 		'</small>' +
 		'</div>' +
 		'</li>';
@@ -17,7 +17,6 @@ function putMessage(data, newMessage = false) {
 		chatBox.innerHTML = '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">'
 		+ htm + chatBox.innerHTML;
 
-	scrollUpdate();
 }
 
 function chatList(user) {
@@ -39,6 +38,9 @@ function openChat(user) {
 
 	let md = document.getElementById('chatBox');
 	md.innerHTML = '';  //Limpa HTML
+
+	let userTitle = document.getElementById('current-user');
+	userTitle.innerText = receiver;
 
 	ws.send(JSON.stringify({
 		command: 'getMessages',
