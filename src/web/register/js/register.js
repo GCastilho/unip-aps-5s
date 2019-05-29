@@ -6,7 +6,15 @@ function register() {
         pas != undefined && pas != null && pas != ""){
 
         $.post(document.location + "",JSON.stringify({user: usr,password:pas}),(result)=>{
-            console.log(result);
+            try{
+                var data =JSON.parse(result);
+                console.log(data);
+                if(data.message != undefined){
+                    alert(data.message);
+                }
+            } catch(e){
+                console.log("Error on parsing json:\n" + result + "\n"+e);
+            }
         });
 
     }else{
