@@ -36,7 +36,7 @@ class Api {
 				Document messageDoc = new Document();
 				messageDoc.put("sender", sender);
 				messageDoc.put("message", message);
-				messageDoc.put("timestamp", data.get("timestamp").toString());
+				messageDoc.put ("timestamp", data.get("timestamp"));
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 
