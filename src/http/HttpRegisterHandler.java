@@ -29,7 +29,7 @@ public class HttpRegisterHandler implements HttpHandler {
 					//se usuario existir
 					dsend.put("Status","Error");
 					dsend.put("message","Usuario ja existe");
-				}else{
+				} else {
 					//se tiver sucesso ao cadastrar
 					dsend.put("Status","ok");
 					dsend.put("message","Usuario Cadastrado");

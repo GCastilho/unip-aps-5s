@@ -11,7 +11,7 @@ public class HttpRootHandler implements HttpHandler {
 	public void handle(HttpExchange httpExchange) throws IOException {
 		if (httpExchange.getRequestMethod().equals("GET")) {
 			if (httpExchange.getRequestURI().getPath().equals("/")) {//
-				Http.sendHtml(httpExchange, "/index.html");
+				Http.sendHtml(httpExchange, "/root/index.html");
 			} else {
 				Http.sendRaw(httpExchange, httpExchange.getRequestURI().getPath());
 			}
