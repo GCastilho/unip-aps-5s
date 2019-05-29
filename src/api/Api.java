@@ -1,14 +1,18 @@
 package api;
 
+import org.bson.Document;
 import org.json.JSONObject;
-
+import org.json.JSONArray;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Api {
-	public static JSONObject process(JSONObject data) {
+import database.DatabaseConnection;
+import database.MongoConnection;
+
+class Api {
+	static JSONObject process(JSONObject data) {
 		JSONObject response = new JSONObject();
 
 		Map<String, Runnable> commands = new HashMap<>();
@@ -19,15 +23,62 @@ public class Api {
 		});
 
 		commands.put("send", () -> {
+			String sender = data.getString("userID");
+			String receiver = data.getString("receiver");
+			String message =   data.getString("message");
 			try {
-				ServerSocketHandler.send(data.getString("receiver"), data.getString("message"));
+				JSONObject mail = new JSONObject();
+				mail.put("status", "ok");
+				mail.put("command", "newMessage");
+				mail.put("sender", sender);
+				mail.put("message", message);
+				ServerSocketHandler.send(receiver, mail.toString());
+
+				Document messageDoc = new Document();
+				messageDoc.put("sender", sender);
+				messageDoc.put("message", message);
+				messageDoc.put("timestamp", data.get("timestamp"));
+
+				MongoConnection.addMessage(messageDoc, sender, receiver);
+
 				response.put("status", "ok");
+				response.put("command", "response");
+				response.put("response", "send");
 				response.put("sended", true);
 			} catch (IOException e) {
 				e.printStackTrace();
-				response.put("status", "error");
-				response.put("info", "Internal server error");
+				commands.get("internalServerError").run();
 			}
+		});
+
+		commands.put("getUserList", () -> {
+			try {
+				response.put("status", "ok");
+				response.put("command", "response");
+				response.put("response", "getUserList");
+				response.put("userList", new JSONArray(DatabaseConnection.getUserList()));
+			} catch (Exception e) {
+				e.printStackTrace();
+				commands.get("internalServerError").run();
+			}
+		});
+
+		commands.put("getMessages", () -> {
+			response.put("status", "ok");
+			response.put("command", "response");
+			response.put("response", "getMessages");
+			String sender = data.getString("userID");
+			String receiver = data.getString("receiver");
+			List<Document> messageBatch;
+			if (data.has("lastID")) {
+				String lastID = data.getString("lastID");
+				messageBatch = MongoConnection.getNextMessageBatch(lastID, sender, receiver);
+			} else {
+				messageBatch = MongoConnection.getFirstMessageBatch(sender, receiver);
+			}
+			JSONArray messageList = new JSONArray();
+			messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
+			response.put("messageList", messageList);
 		});
 
 		// Comandos de erro
@@ -39,6 +90,11 @@ public class Api {
 		commands.put("badRequest", () -> {
 			response.put("status", "error");
 			response.put("info", "Bad request");
+		});
+
+		commands.put("internalServerError", () -> {
+			response.put("status", "error");
+			response.put("info", "Internal server error");
 		});
 
 		if (data.has("command")) {

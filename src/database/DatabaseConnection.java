@@ -6,6 +6,8 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.Date;
+import java.util.List;
+import java.util.ArrayList;
 
 public class DatabaseConnection {
 	private static Connection conn;
@@ -56,17 +58,19 @@ public class DatabaseConnection {
 		}
 	}
 
-	public static String updateCookie(String username, String sessionId) throws Exception {
+	public static void updateCookie(String sessionId) throws Exception {
 		try {
-			getConnection().createStatement().executeQuery(
-					"delete from cookie where sessionId ='" + sessionId + "'"
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"update cookie set timestamp = ? where sessionID = ?"
 			);
+			preparedStatement.setLong(1, new Date().getTime());
+			preparedStatement.setString(2, sessionId);
+
+			preparedStatement.execute();
 		} finally {
 			conn.close();
 		}
-		return makeCookie(username, sessionId);
 	}
-
 
 	public static boolean validCookie(String sessionId) throws Exception {
 		try {
@@ -74,7 +78,7 @@ public class DatabaseConnection {
 					"select timestamp from cookie where sessionId = '"+sessionId+"'"
 			);
 
-			//verify if cookie timestamp is bigger than 10 minutes (in miliseconds)
+			//verify if cookie timestamp is bigger than 10 minutes (in milliseconds)
 			return resultSet.next() && resultSet.getLong(1) > new Date().getTime()-600000;
 		} finally {
 			conn.close();
@@ -94,8 +98,20 @@ public class DatabaseConnection {
 			conn.close ();
 		}
 	}
+	public static List<String> getUserList() throws Exception {
+		try {
+			List<String> list = new ArrayList<>();
+			ResultSet rs = getConnection().createStatement().executeQuery(
+					"select username from credential"
+			);
+			while (rs.next()) list.add(rs.getString(1));
 
-
+			//the List can later be cast into other List
+			return list;
+		} finally {
+			conn.close();
+		}
+	}
 	private static String getSHA512(String input) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");
 		digest.reset();
