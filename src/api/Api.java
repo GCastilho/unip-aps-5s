@@ -30,18 +30,20 @@ class Api {
 				JSONObject mail = new JSONObject();
 				mail.put("status", "ok");
 				mail.put("command", "newMessage");
+				mail.put("sender", sender);
 				mail.put("message", message);
 				ServerSocketHandler.send(receiver, mail.toString());
 
 				Document messageDoc = new Document();
 				messageDoc.put("sender", sender);
 				messageDoc.put("message", message);
-				messageDoc.put ("timestamp", data.get("timestamp"));
+				messageDoc.put("timestamp", data.get("timestamp"));
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 
 				response.put("status", "ok");
 				response.put("command", "response");
+				response.put("response", "send");
 				response.put("sended", true);
 			} catch (IOException e) {
 				e.printStackTrace();
