@@ -84,6 +84,7 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
+
 	public static String getUser(String sessionId) throws Exception {
 		try {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(
@@ -98,6 +99,7 @@ public class DatabaseConnection {
 			conn.close ();
 		}
 	}
+
 	public static List<String> getUserList() throws Exception {
 		try {
 			List<String> list = new ArrayList<>();
@@ -112,6 +114,101 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
+	//retorna todos os usuarios do grupo
+	public static List<String> getgroupUserList(String groupName) throws Exception {
+		List<String> list = new ArrayList<>();
+		try {
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"select groupUser from chatGroup where groupName = ?"
+			);
+			preparedStatement.setString(1, groupName);
+
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()){
+				list.add(rs.getString(1));
+			}
+
+			return list;
+		} finally {
+			conn.close();
+		}
+	}
+	//retorna todos os grupos em que o usuario esta incluso
+	public static List<String> getUserGroupList(String groupMember) throws Exception {
+		try {
+			List<String> list = new ArrayList<>();
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"select groupName from chatGroup where groupMember = ?"
+			);
+			preparedStatement.setString(1, groupMember);
+
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()){
+				list.add(rs.getString(1));
+			}
+
+			return list;
+		} finally {
+			conn.close();
+		}
+	}
+	//cria um grupo e adiciona todos os usuarios que foram enviados
+	public static void createGroupChat(String groupName, String[] userNames) throws Exception {
+		try {
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"insert into chatGroup (chatName, chatUser) values (?,?)"
+			);
+			preparedStatement.setString(1, groupName);
+
+			for(String user : userNames){
+				preparedStatement.setString(2, user);
+				preparedStatement.execute();
+			}
+		} finally {
+			conn.close();
+		}
+	}
+	//adiciona um usuario ao grupo
+	public static void addGroupUser(String groupName, String userName) throws Exception {
+		try {
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"insert into chatGroup (chatName, chatUser) values (?,?)"
+			);
+			preparedStatement.setString(1, groupName);
+			preparedStatement.setString(2, userName);
+			preparedStatement.execute();
+		} finally {
+			conn.close();
+		}
+	}
+	//remove usuario do grupo
+	public static void removeGroupUser(String groupName, String userName) throws Exception {
+		try {
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"delete from chatGroup where chatName = ? and chatUser = ?)"
+			);
+			preparedStatement.setString(1, groupName);
+			preparedStatement.setString(2, userName);
+			preparedStatement.execute();
+		} finally {
+			conn.close();
+		}
+	}
+	//retorna todos os grupos em que o usuario esta incluso
+	public static boolean isGroup (String input) throws Exception {
+		try {
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"select 1 from groupName from chatGroup where groupName = ?"
+			);
+			preparedStatement.setString(1, input);
+
+			return preparedStatement.executeQuery().next();
+		} finally {
+			conn.close();
+		}
+	}
+
+
 	private static String getSHA512(String input) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");
 		digest.reset();
