@@ -47,7 +47,7 @@ class Api {
 				}
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				commands.get("internalServerError").run();
 			}

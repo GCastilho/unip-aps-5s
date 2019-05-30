@@ -5,7 +5,9 @@ function putMessage(data, isNewMessage = false) {
 	let date = new Date(data.timestamp);
 
 	let htm = '<div class="msg-left-sub">' +
-		'<div class="msg-desc">' + data.message + '</div>' +
+		'<div class="msg-desc">' + data.message +
+		(data.fileExtension > 0 ? '<img src="'+ window.location +'/files/'+ lastMessageId + '">' : "") +
+		'</div>' +
 		'<small>' +
 		date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0') +
 		'</small>' +

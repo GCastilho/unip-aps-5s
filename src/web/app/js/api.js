@@ -4,7 +4,7 @@ var ws = new WebSocket("ws://"+window.location.hostname+":8080/");
 
 var me;
 
-var messageId;
+var lastMessageId;
 
 window.onload = () => {
 	me = localStorage.getItem('username');
