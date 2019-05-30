@@ -43,6 +43,27 @@ body{
     border:1px solid #E6E6E6;
     padding: 7px 15px;
 }
+.headLeft-sub label h3{
+    margin: 0px;
+    padding: 0;
+    position: center;
+}
+.headLeft-button {
+    float: left;
+    position: relative;
+}
+.headLeft-button button{
+    position: center;
+    border:0px;
+    padding: 0px 0px;
+    float: left;
+    margin-left: 10px;
+    margin-right: 0px;
+    color: #009EF7;
+    font-size: 18px;
+    background: #fff;
+    cursor: pointer;
+}
 .headRight-section{
     width: 70%;
     float: left;

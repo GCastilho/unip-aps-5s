@@ -26,13 +26,14 @@ window.onload = () => {
 
 };
 
+
 function send() {
 	if ($('#inputMessage').val() !== "") {
 		let data = {
 			command: "send",
 			receiver,
 			message: $('#inputMessage').val(),
-			timestamp: (new Date()).getTime()*1000
+			timestamp: (new Date()).getTime()
 		};
 		ws.send(JSON.stringify(data));
 		data.sender = me;
@@ -89,10 +90,6 @@ ws.onmessage = (evt) => {
 						messageId = message._id.$oid;
 						console.log(messageId);
 						putMessage(message)});
-				});
-
-				requested.set('send', () => {
-					// não implementado
 				});
 
 				if (requested.has(data.response)) {
