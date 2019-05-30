@@ -7,7 +7,7 @@ function putMessage(data, newMessage = false) {
 	let dt = new Date(data.timestamp.$numberLong/1000);
 	console.log(data.timestamp.$numberLong);
 
-	let htm = '<div class="msg-left-sub">' +
+	let htm = '<div id="'+messageId+'" class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message + '</div>' +
 		'<small>' +
 		dt.getHours()+':'+String(dt.getMinutes()).padStart(2, '0') +
@@ -49,4 +49,5 @@ function openChat(user) {
 		command: 'getMessages',
 		receiver,
 	}));
+	setTimeout(function(){scrollUpdate()},100);
 };

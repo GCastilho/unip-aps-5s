@@ -6,6 +6,8 @@ var me;
 
 var messageId;
 
+var lastMessageId;
+
 window.onload = () => {
 	me = localStorage.getItem('username');
 
@@ -30,7 +32,7 @@ function send() {
 			command: "send",
 			receiver,
 			message: $('#inputMessage').val(),
-			timestamp: (new Date()).getTime()
+			timestamp: (new Date()).getTime()*1000
 		};
 		ws.send(JSON.stringify(data));
 		data.sender = me;
@@ -82,6 +84,7 @@ ws.onmessage = (evt) => {
 				});
 
 				requested.set('getMessages', () => {
+					lastMessageId = messageId;
 					data.messageList.forEach(message => {
 						messageId = message._id.$oid;
 						console.log(messageId);
