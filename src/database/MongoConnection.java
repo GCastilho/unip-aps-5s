@@ -33,7 +33,7 @@ public class MongoConnection {
 		//must receive the _id of the last message,as well the sender e receiver
 		//if
 		//the content can be accessed travelling the list and using the getString(key) method
-		receiver = !DatabaseConnection.isGroup(receiver)?alfabeticalOrder(receiver,sender):receiver;
+		receiver = !DatabaseConnection.isGroup(receiver) ? alfabeticalOrder(receiver,sender) : receiver;
 		if (id.equals("0")) {
 			return database.getCollection(receiver).
 					find().projection(include("sender", "message", "timestamp","fileExtension"))
@@ -45,7 +45,6 @@ public class MongoConnection {
 					.projection(include("sender", "message", "timestamp","fileExtension"))
 					.limit(messageBatchSize)
 					.sort(new BasicDBObject("_id", -1)).into(new ArrayList <>());
-
 		}
 	}
 	public static Document getFile (String objectID,String sender, String receiver) throws Exception {
