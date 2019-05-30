@@ -3,10 +3,10 @@ package api;
 import org.bson.Document;
 import org.json.JSONObject;
 import org.json.JSONArray;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Base64;
 
 import database.DatabaseConnection;
 import database.MongoConnection;
@@ -40,6 +40,11 @@ class Api {
 				messageDoc.put("sender", sender);
 				messageDoc.put("message", message);
 				messageDoc.put("timestamp", data.get("timestamp"));
+				if(data.has("file")){
+					byte[] file = Base64.getDecoder().decode(data.getString("file"));
+					messageDoc.put("file", file);
+					messageDoc.put("fileExtension", data.get("fileExtension"));
+				}
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 			} catch (IOException e) {
@@ -59,21 +64,26 @@ class Api {
 			}
 		});
 
-		commands.put("getMessages", () -> {
-			response.put("status", "ok");
-			response.put("command", "getMessages");
-			String sender = data.getString("userID");
-			String receiver = data.getString("receiver");
-			List<Document> messageBatch;
-			if (data.has("lastID")) {
-				String lastID = data.getString("lastID");
-				messageBatch = MongoConnection.getNextMessageBatch(lastID, sender, receiver);
-			} else {
-				messageBatch = MongoConnection.getFirstMessageBatch(sender, receiver);
+		commands.put("getMessages", () ->  {
+			try {
+				response.put("status", "ok");
+				response.put("command", "getMessages");
+				String sender = data.getString("userID");
+				String receiver = data.getString("receiver");
+				List<Document> messageBatch;
+				if (data.has("lastID")) {
+					String lastID = data.getString("lastID");
+					messageBatch = MongoConnection.getMessageBatch(lastID, sender, receiver);
+				} else {
+					messageBatch = MongoConnection.getMessageBatch("0", sender, receiver);
+				}
+				JSONArray messageList = new JSONArray();
+				messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
+				response.put("messageList", messageList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				commands.get("internalServerError").run();
 			}
-			JSONArray messageList = new JSONArray();
-			messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
-			response.put("messageList", messageList);
 		});
 
 		// Comandos de erro
