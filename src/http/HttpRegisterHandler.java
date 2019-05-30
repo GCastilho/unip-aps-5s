@@ -3,19 +3,13 @@ package http;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import database.DatabaseConnection;
-import jdk.nashorn.internal.parser.JSONParser;
 import org.bson.json.JsonParseException;
 import org.json.JSONObject;
-import org.json.JSONString;
-import org.json.JSONStringer;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class HttpRegisterHandler implements HttpHandler {
-	//instancia o databaseConector para a classe inteira
-	DatabaseConnection db = new DatabaseConnection();
-
 	public void handle(HttpExchange httpExchange) throws IOException {
 		if (httpExchange.getRequestMethod().equals("GET")) {
 			if (httpExchange.getRequestURI().getPath().equals("/register")) {//
@@ -31,7 +25,7 @@ public class HttpRegisterHandler implements HttpHandler {
 
 				//envia os dados do usuario para cadastrar
 				JSONObject dsend = new JSONObject();
-				if(!db.signUp(userdata.getString("user"), userdata.getString("password"))){
+				if(!DatabaseConnection.signUp(userdata.getString("user"), userdata.getString("password"))){
 					//se usuario existir
 					dsend.put("Status","Error");
 					dsend.put("message","Usuario ja existe");
