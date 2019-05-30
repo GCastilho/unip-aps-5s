@@ -27,6 +27,7 @@ class Api {
 			String sender = data.getString("userID");
 			String receiver = data.getString("receiver");
 			String message =   data.getString("message");
+			if (sender.equals(receiver)) { commands.get("badRequest").run(); return; }
 			try {
 				JSONObject mail = new JSONObject();
 				mail.put("status", "ok");
@@ -41,9 +42,6 @@ class Api {
 				messageDoc.put("timestamp", data.get("timestamp"));
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
-
-				//response.put("status", "ok");
-				//response.put("info", "Message sended");
 			} catch (IOException e) {
 				e.printStackTrace();
 				commands.get("internalServerError").run();

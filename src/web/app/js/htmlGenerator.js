@@ -2,10 +2,12 @@
 function putMessage(data, isNewMessage = false) {
 	let chatBox = document.getElementById('chatBox');
 
+	let date = new Date(data.timestamp);
+
 	let htm = '<div class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message + '</div>' +
 		'<small>' +
-		(new Date(data.timestamp)).getHours()+':'+String((new Date(data.timestamp)).getMinutes()).padStart(2, '0') +
+		date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0') +
 		'</small>' +
 		'</div>' +
 		'</li>';

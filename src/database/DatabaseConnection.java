@@ -104,7 +104,10 @@ public class DatabaseConnection {
 			ResultSet rs = getConnection().createStatement().executeQuery(
 					"select username from credential"
 			);
-			while (rs.next()) list.add(rs.getString(1));
+			while (rs.next()) {
+				String user = rs.getString(1);
+				if (!user.equals("root")) list.add(user);
+			}
 
 			//the List can later be cast into other List
 			return list;
