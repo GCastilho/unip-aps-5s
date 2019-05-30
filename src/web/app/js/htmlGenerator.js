@@ -4,10 +4,13 @@ function putMessage(data, newMessage = false) {
 
 	let chatBox = document.getElementById('chatBox');
 
+	let dt = new Date(data.timestamp.$numberLong/1000);
+	console.log(data.timestamp.$numberLong);
+
 	let htm = '<div class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message + '</div>' +
 		'<small>' +
-		(new Date(data.timestamp)).getHours()+':'+String((new Date(data.timestamp)).getMinutes()).padStart(2, '0') +
+		dt.getHours()+':'+String(dt.getMinutes()).padStart(2, '0') +
 		'</small>' +
 		'</div>' +
 		'</li>';
