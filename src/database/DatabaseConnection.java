@@ -119,7 +119,7 @@ public class DatabaseConnection {
 		List<String> list = new ArrayList<>();
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"select groupUser from chatGroup where groupName = ?"
+					"select groupMember from chatGroup where groupName = ?"
 			);
 			preparedStatement.setString(1, groupName);
 
@@ -156,7 +156,7 @@ public class DatabaseConnection {
 	public static void createGroupChat(String groupName, String[] userNames) throws Exception {
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"insert into chatGroup (chatName, chatUser) values (?,?)"
+					"insert into chatGroup (groupName, groupMember) values (?,?)"
 			);
 			preparedStatement.setString(1, groupName);
 
@@ -172,7 +172,7 @@ public class DatabaseConnection {
 	public static void addGroupUser(String groupName, String userName) throws Exception {
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"insert into chatGroup (chatName, chatUser) values (?,?)"
+					"insert into chatGroup (groupName, groupMember) values (?,?)"
 			);
 			preparedStatement.setString(1, groupName);
 			preparedStatement.setString(2, userName);
@@ -185,7 +185,7 @@ public class DatabaseConnection {
 	public static void removeGroupUser(String groupName, String userName) throws Exception {
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"delete from chatGroup where chatName = ? and chatUser = ?)"
+					"delete from chatGroup where groupName = ? and groupMember = ?"
 			);
 			preparedStatement.setString(1, groupName);
 			preparedStatement.setString(2, userName);
@@ -198,7 +198,7 @@ public class DatabaseConnection {
 	public static boolean isGroup (String input) throws Exception {
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"select 1 from groupName from chatGroup where groupName = ?"
+					"select 1 from chatGroup where groupName = ?"
 			);
 			preparedStatement.setString(1, input);
 
@@ -207,7 +207,6 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
-
 
 	private static String getSHA512(String input) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");

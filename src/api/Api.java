@@ -1,6 +1,8 @@
 package api;
 
 import org.bson.Document;
+import org.bson.types.Binary;
+
 import org.json.JSONObject;
 import org.json.JSONArray;
 import java.io.IOException;
@@ -38,6 +40,14 @@ class Api {
 				messageDoc.put("sender", sender);
 				messageDoc.put("message", message);
 				messageDoc.put("timestamp", data.get("timestamp"));
+				if(data.has("file")){
+					//esse é um exemplo de como inserir um byteArray no database, eu nao sei como serao pegos
+					messageDoc.put("file", new byte[]{1,2,3,4,5,6,7,8,9,5});
+					//a linha abaixo é para ser usada caso o tipo de arquivo que sera recebido atravez de data for um byte[] ou algo do tipo
+					//messageDoc.put("file", data.get("file"));
+					//caso nao for reconhecido no mongoDatabase como binary, deve ser convertido para um byteArray ou similar
+					messageDoc.put("fileExtension",data.get("fileExtension"));
+				}
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 
@@ -72,9 +82,9 @@ class Api {
 			List<Document> messageBatch;
 			if (data.has("lastID")) {
 				String lastID = data.getString("lastID");
-				messageBatch = MongoConnection.getNextMessageBatch(lastID, sender, receiver);
+				messageBatch = MongoConnection.getMessageBatch(lastID, sender, receiver);
 			} else {
-				messageBatch = MongoConnection.getFirstMessageBatch(sender, receiver);
+				messageBatch = MongoConnection.getMessageBatch("0", sender, receiver);
 			}
 			JSONArray messageList = new JSONArray();
 			messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
