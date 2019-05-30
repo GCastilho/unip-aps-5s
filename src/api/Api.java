@@ -55,7 +55,7 @@ class Api {
 				response.put("command", "response");
 				response.put("response", "send");
 				response.put("sended", true);
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 				commands.get("internalServerError").run();
 			}
@@ -73,22 +73,27 @@ class Api {
 			}
 		});
 
-		commands.put("getMessages", () -> {
-			response.put("status", "ok");
-			response.put("command", "response");
-			response.put("response", "getMessages");
-			String sender = data.getString("userID");
-			String receiver = data.getString("receiver");
-			List<Document> messageBatch;
-			if (data.has("lastID")) {
-				String lastID = data.getString("lastID");
-				messageBatch = MongoConnection.getMessageBatch(lastID, sender, receiver);
-			} else {
-				messageBatch = MongoConnection.getMessageBatch("0", sender, receiver);
+		commands.put("getMessages", () ->  {
+			try {
+				response.put("status", "ok");
+				response.put("command", "response");
+				response.put("response", "getMessages");
+				String sender = data.getString("userID");
+				String receiver = data.getString("receiver");
+				List<Document> messageBatch;
+				if (data.has("lastID")) {
+					String lastID = data.getString("lastID");
+					messageBatch = MongoConnection.getMessageBatch(lastID, sender, receiver);
+				} else {
+					messageBatch = MongoConnection.getMessageBatch("0", sender, receiver);
+				}
+				JSONArray messageList = new JSONArray();
+				messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
+				response.put("messageList", messageList);
+			} catch (Exception e) {
+				e.printStackTrace();
+				commands.get("internalServerError").run();
 			}
-			JSONArray messageList = new JSONArray();
-			messageBatch.forEach(message -> messageList.put(new JSONObject(message.toJson())));
-			response.put("messageList", messageList);
 		});
 
 		// Comandos de erro
