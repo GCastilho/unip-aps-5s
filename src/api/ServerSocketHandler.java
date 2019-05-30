@@ -13,6 +13,8 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.json.JSONObject;
 
+import javax.xml.crypto.Data;
+
 @WebSocket
 public class ServerSocketHandler {
 	private final static HashMap<String, ServerSocketHandler> sockets = new HashMap<>();
@@ -24,7 +26,15 @@ public class ServerSocketHandler {
 	public void onClose(Session session, int statusCode, String reason) {
 		System.out.println("Close: statusCode: " + statusCode + ", reason: " + reason);
 
-		// remove connection
+		// Remove cookie from database
+		try {
+			DatabaseConnection.dropCookie(this.sessionID);
+		} catch (Exception e) {
+			System.out.println("Error deleting cookie from database");
+			e.printStackTrace();
+		}
+
+		// Remove socket from map
 		ServerSocketHandler.sockets.remove(this.userID);
 	}
 

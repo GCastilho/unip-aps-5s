@@ -112,6 +112,25 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
+
+	public static void dropCookies() throws Exception {
+		try {
+			getConnection().createStatement().execute("truncate cookie");
+		} finally {
+			conn.close();
+		}
+	}
+
+	public static void dropCookie(String sessionID) throws Exception {
+		try {
+			getConnection().createStatement().execute(
+					"delete from cookie where sessionID = '" + sessionID + "'"
+			);
+		} finally {
+			conn.close();
+		}
+	}
+
 	private static String getSHA512(String input) throws NoSuchAlgorithmException {
 		MessageDigest digest = MessageDigest.getInstance("SHA-512");
 		digest.reset();
