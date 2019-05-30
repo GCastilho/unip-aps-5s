@@ -54,7 +54,6 @@ public class ServerSocketHandler {
 
 	@OnWebSocketMessage
 	public void onMessage(String message) throws Exception {
-		System.out.println("Message: " + message);
 		JSONObject jsonMessage = new JSONObject(message);
 
 		JSONObject response = new JSONObject();
@@ -70,8 +69,7 @@ public class ServerSocketHandler {
 					ServerSocketHandler.sockets.put(this.userID, this);
 
 					response.put("status", "ok");
-					response.put("command", "response");
-					response.put("response", "greetings");
+					response.put("info", "greetings");
 				} catch (SQLException e) {
 					response.put("status", "error");
 					response.put("command", "response");
@@ -87,8 +85,7 @@ public class ServerSocketHandler {
 			}
 		} else {
 			if (DatabaseConnection.validCookie(this.sessionID)) {
-				// Atualizar o cookie do usuário aqui
-				// O cliente tbm deve atualizar o cookie do usuário em cada interação
+				DatabaseConnection.updateCookie(this.sessionID);
 				jsonMessage.put("userID", userID);
 				response = Api.process(jsonMessage);
 			} else {
@@ -96,7 +93,7 @@ public class ServerSocketHandler {
 				response.put("info", "Not logged in");
 			}
 		}
-		this.sendClient(response.toString());
+		if (!response.isEmpty()) this.sendClient(response.toString());
 	}
 
 	private void sendClient(String message) throws IOException {

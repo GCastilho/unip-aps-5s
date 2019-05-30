@@ -1,7 +1,5 @@
 //função para gerar as mensagens e adicionar ao HTML
-function putMessage(data, newMessage = false) {
-	console.log(data);
-
+function putMessage(data, isNewMessage = false) {
 	let chatBox = document.getElementById('chatBox');
 
 	let htm = '<div class="msg-left-sub">' +
@@ -12,11 +10,12 @@ function putMessage(data, newMessage = false) {
 		'</div>' +
 		'</li>';
 
-	newMessage ?
-		chatBox.innerHTML += '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">' + htm:
+	if (isNewMessage) {
+		chatBox.innerHTML += '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">' + htm;
+	} else {
 		chatBox.innerHTML = '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">'
-		+ htm + chatBox.innerHTML;
-
+			+ htm + chatBox.innerHTML;
+	}
 }
 
 function chatList(user) {
@@ -31,7 +30,7 @@ function chatList(user) {
             '</li>'
         );
     })
-};
+}
 
 function openChat(user) {
 	receiver = user;
@@ -46,4 +45,4 @@ function openChat(user) {
 		command: 'getMessages',
 		receiver,
 	}));
-};
+}

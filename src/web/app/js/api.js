@@ -59,41 +59,14 @@ ws.onmessage = (evt) => {
 		if (data.status === 'ok') {
 			let command = new Map();
 
-			command.set('response', () => {
-				let requested = new Map();
+			command.set('getUserList', () => {
+				data.userList.forEach(user => chatList(user));
+			});
 
-				requested.set('send', () => {
-					if (data.sended) {
-						console.log('Mensagem enviada');
-					} else {
-						console.log('Erro ao enviar mensagem');
-					}
-				});
-
-				requested.set('greetings', () => {
-					console.log("Greetings ok!");
-				});
-
-				requested.set('getUserList', () => {
-					data.userList.forEach(user => chatList(user));
-				});
-
-				requested.set('getMessages', () => {
-					data.messageList.forEach(message => {
-						messageId = message._id.$oid;
-						console.log(messageId);
-						putMessage(message)});
-				});
-
-				requested.set('send', () => {
-					// não implementado
-				});
-
-				if (requested.has(data.response)) {
-					requested.get(data.response)();
-				} else {
-					console.log('Unrecognized requested response: ' + data.response);
-				}
+			command.set('getMessages', () => {
+				data.messageList.forEach(message => {
+					lastMessageId = message._id.$oid;
+					putMessage(message)});
 			});
 
 			command.set('newMessage', () => {
@@ -103,6 +76,8 @@ ws.onmessage = (evt) => {
 
 			if (command.has(data.command)) {
 				command.get(data.command)();
+			} else if (data.info !== undefined) {
+				console.log("INFO: " + data.info);
 			}  else {
 				console.log('Unrecognized command response: ' + data.command);
 			}

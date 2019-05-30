@@ -13,13 +13,14 @@ import database.MongoConnection;
 
 class Api {
 	static JSONObject process(JSONObject data) {
+		System.out.println("Message: " + data.toString());
 		JSONObject response = new JSONObject();
 
 		Map<String, Runnable> commands = new HashMap<>();
 		// Comandos reconhecidos (ok)
 		commands.put("hello", () -> {
 			response.put("status", "ok");
-			response.put("info","hi");
+			response.put("info", "hi");
 		});
 
 		commands.put("send", () -> {
@@ -41,10 +42,8 @@ class Api {
 
 				MongoConnection.addMessage(messageDoc, sender, receiver);
 
-				response.put("status", "ok");
-				response.put("command", "response");
-				response.put("response", "send");
-				response.put("sended", true);
+				//response.put("status", "ok");
+				//response.put("info", "Message sended");
 			} catch (IOException e) {
 				e.printStackTrace();
 				commands.get("internalServerError").run();
@@ -54,8 +53,7 @@ class Api {
 		commands.put("getUserList", () -> {
 			try {
 				response.put("status", "ok");
-				response.put("command", "response");
-				response.put("response", "getUserList");
+				response.put("command", "getUserList");
 				response.put("userList", new JSONArray(DatabaseConnection.getUserList()));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -65,8 +63,7 @@ class Api {
 
 		commands.put("getMessages", () -> {
 			response.put("status", "ok");
-			response.put("command", "response");
-			response.put("response", "getMessages");
+			response.put("command", "getMessages");
 			String sender = data.getString("userID");
 			String receiver = data.getString("receiver");
 			List<Document> messageBatch;
