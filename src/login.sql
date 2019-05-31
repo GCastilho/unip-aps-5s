@@ -8,6 +8,7 @@ CREATE TABLE credential (
     salt varchar(30),
     password_hash VARCHAR(128)
 );
+
 CREATE TABLE cookie (
     username VARCHAR(20),
     sessionID VARCHAR(128) UNIQUE,

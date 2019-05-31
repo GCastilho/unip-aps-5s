@@ -43,7 +43,7 @@ ws.onopen = function() {
 		command: "greetings",
 		sessionID: document.cookie.slice("sessionID=".length)
 	}));
-	ws.send(JSON.stringify({command: "getUserList"}));
+	ws.send(JSON.stringify({command: "getChatList"}));
 };
 
 ws.onclose = function() {
@@ -60,7 +60,10 @@ ws.onmessage = function(evt) {
 		if (data.status === 'ok') {
 			let command = new Map();
 
-			command.set('getUserList', () => {
+			command.set('getChatList', () => {
+				data.groupsList.forEach(group => {
+					chatList(group, true)
+				});
 				data.userList.forEach(user => {
 					if (user !== me) chatList(user)
 				});

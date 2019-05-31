@@ -1,11 +1,13 @@
 package api;
 
-import com.mysql.cj.xdevapi.JsonArray;
 import org.bson.Document;
 import org.json.JSONObject;
 import org.json.JSONArray;
-
-import java.util.*;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import database.DatabaseConnection;
 import database.MongoConnection;
@@ -16,6 +18,7 @@ class Api {
 		JSONObject response = new JSONObject();
 
 		Map<String, Runnable> commands = new HashMap<>();
+
 		// Comandos reconhecidos (ok)
 		commands.put("hello", () -> {
 			response.put("status", "ok");
@@ -33,7 +36,18 @@ class Api {
 				mail.put("command", "newMessage");
 				mail.put("sender", sender);
 				mail.put("message", message);
-				ServerSocketHandler.send(receiver, mail.toString());
+				if (DatabaseConnection.isGroup(receiver)) {
+					DatabaseConnection.getGroupUserList(receiver)
+							.forEach(user -> {
+								try{
+									ServerSocketHandler.send(user, mail.toString());
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							});
+				} else {
+					ServerSocketHandler.send(receiver, mail.toString());
+				}
 
 				Document messageDoc = new Document();
 				messageDoc.put("sender", sender);
@@ -73,35 +87,22 @@ class Api {
 				commands.get("internalServerError").run();
 			}
 		});
-		commands.put("getUserList", () -> {
-		//esse comando esta como getUserList por motivos de teste e nao querer mudar as chamadas dele
-		//o nome intendido para esse comando é getAllChatsList
-		//retorna todas as conversas (grupos em que o usuario esta incluso e os usuarios)
-			try {
-				response.put("status", "ok");
-				response.put("command", "getUserList");
-				List list = DatabaseConnection.getUserGroupList(data.getString("userID"));
-				list.addAll(DatabaseConnection.getUserList());
-				JSONArray a = new JSONArray(list);
 
-				response.put("userList",a);
-			} catch (Exception e) {
-				e.printStackTrace();
-				commands.get("internalServerError").run();
-			}
-		});
-		/*
-		commands.put("getUserList", () -> {
+		commands.put("getChatList", () -> {
 			try {
 				response.put("status", "ok");
-				response.put("command", "getUserList");
-				response.put("userList", new JSONArray(DatabaseConnection.getUserList()));
+				response.put("command", "getChatList");
+				List<String> userList = DatabaseConnection.getUserList();
+				List<String> groupsList = DatabaseConnection.getUserGroupList(data.getString("userID"));
+
+				response.put("userList", new JSONArray(userList));
+				response.put("groupsList", new JSONArray(groupsList));
 			} catch (Exception e) {
 				e.printStackTrace();
 				commands.get("internalServerError").run();
 			}
 		});
-		*/
+
 		commands.put("getChatUserList", () -> {
 			try {
 				String user = data.getString("userID");
@@ -113,6 +114,7 @@ class Api {
 				commands.get("internalServerError").run();
 			}
 		});
+
 		commands.put("addNewGroup", () -> {
 			try {
 				String group = data.getString("groupName");
@@ -133,6 +135,7 @@ class Api {
 				commands.get("internalServerError").run();
 			}
 		});
+
 		commands.put("addUserToGroup", () -> {
 			try {
 				String group = data.getString("groupName");
@@ -147,6 +150,7 @@ class Api {
 				commands.get("internalServerError").run();
 			}
 		});
+
 		commands.put("removeUserFromGroup", () -> {
 			try {
 				String group = data.getString("groupName");
@@ -161,6 +165,7 @@ class Api {
 				commands.get("internalServerError").run();
 			}
 		});
+
 		commands.put("getGroupUsers", () -> {
 			try {
 				String group = data.getString("groupName");

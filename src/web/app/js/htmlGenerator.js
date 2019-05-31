@@ -22,13 +22,13 @@ function putMessage(data, isNewMessage = false) {
 	}
 }
 
-function chatList(user) {
+function chatList(name, isGroup = false) {
     $(() => {
         $('.chatList').append(
-            '<li user="'+user+'" onclick="openChat(\''+user+'\')">' +
-            '<div user="'+user+'" class="listContainer">' +
-            '<div user="'+user+'" class="desc">' +
-            '<h5 user="'+user+'">'+user+'</h5>' +
+            '<li user="'+name+'" onclick="openChat(\''+name+'\')">' +
+            '<div user="'+name+'" class="listContainer">' +
+            '<div user="'+name+'" class="desc">' +
+            '<h5 user="'+name+'">'+(isGroup ? name.slice(0, name.length-41) : name)+'</h5>' +
             '</div>' +
             '</div>' +
             '</li>'

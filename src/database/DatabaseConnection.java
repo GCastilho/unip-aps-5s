@@ -222,7 +222,7 @@ public class DatabaseConnection {
 		}
 	}
 
-	static boolean isGroup (String input) throws Exception {
+	public static boolean isGroup (String input) throws Exception {
 		try {
 			if(input.length()<41){
 				return false;
