@@ -6,8 +6,6 @@ var me;
 
 var lastMessageId;
 
-var lastMessageId;
-
 window.onload = () => {
 	me = localStorage.getItem('username');
 
@@ -34,7 +32,7 @@ function send() {
 			command: "send",
 			receiver,
 			message: inputMessage.val(),
-			timestamp: (new Date()).getTime()
+			timestamp: new Date().getTime()
 		};
 		ws.send(JSON.stringify(data));
 		data.sender = me;

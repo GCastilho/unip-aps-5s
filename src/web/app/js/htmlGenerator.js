@@ -2,7 +2,7 @@
 function putMessage(data, isNewMessage = false) {
 	let chatBox = document.getElementById('chatBox');
 
-	let date = new Date(data.timestamp);
+	let date = new Date((data.timestamp["$numberLong"] !== undefined) ? (data.timestamp["$numberLong"]/1000)-(1000*60*60*4) : data.timestamp);
 
 	let htm = '<div id="'+lastMessageId+'" class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message +

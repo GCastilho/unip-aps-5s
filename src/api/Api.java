@@ -36,6 +36,7 @@ class Api {
 				mail.put("command", "newMessage");
 				mail.put("sender", sender);
 				mail.put("message", message);
+				mail.put("timestamp", data.get("timestamp"));
 				if (DatabaseConnection.isGroup(receiver)) {
 					DatabaseConnection.getGroupUserList(receiver)
 							.forEach(user -> {
