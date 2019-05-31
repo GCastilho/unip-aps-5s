@@ -10,7 +10,7 @@ window.onload = () => {
 	me = localStorage.getItem('username');
 
 	let user = document.getElementById('current-session');
-	user.innerText = me;
+	user.innerText = 'Bem vindo, '+me+'!';
 
 	$('.btn-send').click(() => {
 		send();
