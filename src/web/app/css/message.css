@@ -1,6 +1,7 @@
 body{
     font-family: 'Raleway', sans-serif;
     background-color: #ACCEDC;
+    resize: none;
     margin: 3% 3% 3% 3%;
 }
 .main-section small{
@@ -241,6 +242,12 @@ body{
     font-size: 18px;
     background: #fff;
     cursor: pointer;
+}
+.emojiPicker{
+    width: 280px !important;
+    height: 250px !important;
+    top: 255.359px !important;
+    left: 1263.531px !important;
 }
 .upload-btn{
     position: relative;

@@ -22,6 +22,18 @@ window.onload = () => {
 		}
 	});
 
+	$('#inputMessage').emojiPicker({
+		width: '100',
+		height: '250',
+		position: 'top',
+		fadeTime: 100,
+		iconColor: 'black',
+		iconBackgroundColor: '#fff',
+		recentCount: 36,
+		emojiSet: 'apple',
+		container: 'body',
+		button: true
+	});
 };
 
 
