@@ -8,6 +8,9 @@ import java.sql.*;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
 
 public class DatabaseConnection {
 	private static Connection conn;
@@ -117,6 +120,24 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
+	//retorna todos os grupos em que o usuario esta incluso
+	public static List<String> getUserGroupList(String groupMember) throws Exception {
+		try {
+			List<String> list = new ArrayList<>();
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"select groupName, groupID from chatGroup where groupMember = ?"
+			);
+			preparedStatement.setString(1, groupMember);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()){
+				list.add(rs.getString(1)+"-"+rs.getString(2));
+			}
+
+			return list;
+		} finally {
+			conn.close();
+		}
+	}
 
 	public static void dropCookies() throws Exception {
 		try {
@@ -135,53 +156,14 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
-
-	//retorna todos os usuarios do grupo
-	public static List<String> getgroupUserList(String groupName) throws Exception {
-		List<String> list = new ArrayList<>();
-		try {
-			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"select groupMember from chatGroup where groupName = ?"
-			);
-			preparedStatement.setString(1, groupName);
-
-			ResultSet rs = preparedStatement.executeQuery();
-			while (rs.next()){
-				list.add(rs.getString(1));
-			}
-
-			return list;
-		} finally {
-			conn.close();
-		}
-	}
-	//retorna todos os grupos em que o usuario esta incluso
-	public static List<String> getUserGroupList(String groupMember) throws Exception {
-		try {
-			List<String> list = new ArrayList<>();
-			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"select groupName from chatGroup where groupMember = ?"
-			);
-			preparedStatement.setString(1, groupMember);
-
-			ResultSet rs = preparedStatement.executeQuery();
-			while (rs.next()){
-				list.add(rs.getString(1));
-			}
-
-			return list;
-		} finally {
-			conn.close();
-		}
-	}
 	//cria um grupo e adiciona todos os usuarios que foram enviados
-	public static void createGroupChat(String groupName, String[] userNames) throws Exception {
+	public static void createGroup(String groupName, String[] userNames) throws Exception {
 		try {
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"insert into chatGroup (groupName, groupMember) values (?,?)"
+					"insert into chatGroup (groupName, groupMember, groupID) values (?,?,?)"
 			);
 			preparedStatement.setString(1, groupName);
-
+			preparedStatement.setString(3, getSHA1(groupName+new Date().getTime()));
 			for(String user : userNames){
 				preparedStatement.setString(2, user);
 				preparedStatement.execute();
@@ -193,11 +175,14 @@ public class DatabaseConnection {
 	//adiciona um usuario ao grupo
 	public static void addGroupUser(String groupName, String userName) throws Exception {
 		try {
+			String groupID = groupName.substring(groupName.length()-40);
+			groupName = groupName.replace("-"+groupID,"");
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"insert into chatGroup (groupName, groupMember) values (?,?)"
+					"insert into chatGroup (groupName, groupMember, groupID) values (?,?,?)"
 			);
 			preparedStatement.setString(1, groupName);
 			preparedStatement.setString(2, userName);
+			preparedStatement.setString(3, groupID);
 			preparedStatement.execute();
 		} finally {
 			conn.close();
@@ -216,15 +201,36 @@ public class DatabaseConnection {
 			conn.close();
 		}
 	}
-	//retorna todos os grupos em que o usuario esta incluso
-	public static boolean isGroup (String input) throws Exception {
+	//retorna todos os usuarios do grupo
+	public static List<String> getGroupUserList(String groupName) throws Exception {
 		try {
+			List<String> list = new ArrayList<>();
+			String groupID = groupName.substring(groupName.length()-40);
+			groupName = groupName.replace("-"+groupID,"");
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
-					"select 1 from chatGroup where groupName = ?"
+					"select groupMember from chatGroup where groupName = ? and groupID = ?"
 			);
-			preparedStatement.setString(1, input);
+			preparedStatement.setString(1, groupName);
+			preparedStatement.setString(2, groupID);
+			ResultSet rs = preparedStatement.executeQuery();
+			while (rs.next()){
+				list.add(rs.getString(1));
+			}
+			return list;
+		} finally {
+			conn.close();
+		}
+	}
 
-			return preparedStatement.executeQuery().next();
+	static boolean isGroup (String input) throws Exception {
+		try {
+			if(input.length()<41){
+				return false;
+			}
+			input = input.substring(input.length()-41);
+			Pattern pattern = Pattern.compile("-\\w{40}");
+			Scanner scanner = new Scanner( input );
+			return scanner.hasNext(pattern);
 		} finally {
 			conn.close();
 		}
@@ -236,6 +242,13 @@ public class DatabaseConnection {
 		digest.update(input.getBytes(StandardCharsets.UTF_8));
 
 		return (String.format("%0128x", new BigInteger(1, digest.digest())));
+	}
+	private static String getSHA1(String input) throws NoSuchAlgorithmException {
+		MessageDigest digest = MessageDigest.getInstance("SHA-1");
+		digest.reset();
+		digest.update(input.getBytes(StandardCharsets.UTF_8));
+		input = (String.format("%040x", new BigInteger(1, digest.digest())));
+		return input;
 	}
 
 }
