@@ -43,7 +43,7 @@ function openChat(user) {
 	md.innerHTML = '';  //Limpa HTML
 
 	let userTitle = document.getElementById('current-user');
-	userTitle.innerText = receiver;
+	userTitle.innerText = (receiver.length>20? receiver.substr(0,receiver.length -41):receiver);
 
 	ws.send(JSON.stringify({
 		command: 'getMessages',
