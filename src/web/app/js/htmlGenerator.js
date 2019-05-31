@@ -4,7 +4,7 @@ function putMessage(data, isNewMessage = false) {
 
 	let date = new Date(data.timestamp);
 
-	let htm = '<div class="msg-left-sub">' +
+	let htm = '<div id="'+lastMessageId+'" class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message +
 		(data.fileExtension > 0 ? '<img src="'+ window.location +'/files/'+ lastMessageId + '">' : "") +
 		'</div>' +
@@ -49,4 +49,5 @@ function openChat(user) {
 		command: 'getMessages',
 		receiver,
 	}));
-}
+	setTimeout(function(){scrollUpdate()},100);
+};

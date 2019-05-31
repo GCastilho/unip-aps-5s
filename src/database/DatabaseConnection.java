@@ -75,6 +75,38 @@ public class DatabaseConnection {
 		}
 	}
 
+	public static boolean signUp(String user, String password) throws Exception {
+		try {
+			//verifica se o usuario ja esta cadastrado
+			PreparedStatement preparedStatement = getConnection().prepareStatement(
+					"select * from credential where username = ?"
+			);
+			preparedStatement.setString(1, user);
+
+			if(preparedStatement.executeQuery().next()){
+				//retorna false se existe um usuario com esse username
+				return false;
+			}
+			//adiciona o usuario no banco de dados
+			//as linhas comentadas se referem a uma situacao em que salt ja esta implementado
+			//salt no database é um varchar(30),nao sei se isso é pequeno ou grande
+			preparedStatement = conn.prepareStatement(
+					//"insert into credential (username,password_hash,salt) values (?,?,?)"
+					"insert into credential (username,password_hash) values (?,?)"
+			);
+			preparedStatement.setString(1, user);
+			preparedStatement.setString(2, getSHA512(password));
+			//preparedStatement.setString(3, salt);
+
+			preparedStatement.execute();
+
+			return true;
+		} finally {
+			conn.close();
+		}
+	}
+
+
 	public static boolean validCookie(String sessionId) throws Exception {
 		try {
 			ResultSet resultSet = getConnection().createStatement().executeQuery(

@@ -6,8 +6,13 @@ var me;
 
 var lastMessageId;
 
+var lastMessageId;
+
 window.onload = () => {
 	me = localStorage.getItem('username');
+
+	let user = document.getElementById('current-session');
+	user.innerText = me;
 
 	$('.btn-send').click(() => {
 		send();
@@ -20,6 +25,7 @@ window.onload = () => {
 	});
 
 };
+
 
 function send() {
 	let inputMessage = $('#inputMessage');

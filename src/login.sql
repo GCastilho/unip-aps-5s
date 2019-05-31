@@ -5,7 +5,7 @@ use unip_aps_5s;
 CREATE TABLE credential (
     ID INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(20) UNIQUE NOT NULL,
-    salt varchar(30),
+    salt varchar(40),
     password_hash VARCHAR(128)
 );
 

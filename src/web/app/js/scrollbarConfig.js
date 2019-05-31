@@ -9,12 +9,14 @@ $(() => {
                     receiver,
                     lastID: messageId
                 }));
+                setTimeout(function () {
+                    $('.message').mCustomScrollbar("scrollTo", "#"+lastMessageId,{scrollInertia: 0});
+                }, 100)
             }
         }
     });
     $('.left-section').mCustomScrollbar({
-        height: 0,
-
+        height: 0
     });
 });
 
