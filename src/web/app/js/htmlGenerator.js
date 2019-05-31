@@ -50,4 +50,25 @@ function openChat(user) {
 		receiver,
 	}));
 	setTimeout(function(){scrollUpdate()},100);
-};
+}
+
+function upload_file() {
+	let form = document.createElement("form");
+	form.setAttribute('method', 'POST');
+	form.setAttribute('enctype', "multipart/form-data");
+	form.setAttribute('target', "mf");
+	form.setAttribute('action', window.location + '../file');
+
+	let dinput = document.createElement("input");
+	dinput.setAttribute("name","receiver");
+	dinput.setAttribute("value",receiver);
+	form.appendChild(dinput);
+
+	dinput = document.createElement("input");
+	dinput.setAttribute("name","file");
+	dinput.setAttribute("type","file");
+	form.appendChild(dinput);
+	dinput.click();
+
+	form.submit();
+}
