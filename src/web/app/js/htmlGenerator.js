@@ -1,32 +1,54 @@
 //função para gerar as mensagens e adicionar ao HTML
-let messageRight = (data) => {
-    $(() => {
-        console.log(data);
-        $('.chat').append(
-            "<li class=\"msg-right\">" +
-            "<div class=\"msg-left-sub\">" +
-            "<div class=\"msg-desc\">" + data.message +
-            "</div>" +
-            "<small>"+(new Date(data.timestamp)).getHours()+":"+(new Date(data.timestamp)).getMinutes()+"</small>" +
-            "</div>" +
-            "</li>");
+function putMessage(data, newMessage = false) {
+	console.log(data);
 
-        scrollUpdate();
+	let chatBox = document.getElementById('chatBox');
+
+	let dt = new Date((data.timestamp.$numberLong !== undefined) ? data.timestamp.$numberLong/1000 : data.timestamp);
+
+	console.log(data.timestamp.$numberLong);
+
+	let htm = '<div id="'+messageId+'" class="msg-left-sub">' +
+		'<div class="msg-desc">' + data.message + '</div>' +
+		'<small>' +
+		dt.getHours()+':'+String(dt.getMinutes()).padStart(2, '0') +
+		'</small>' +
+		'</div>' +
+		'</li>';
+
+	newMessage ?
+		chatBox.innerHTML += '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">' + htm:
+		chatBox.innerHTML = '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">'
+		+ htm + chatBox.innerHTML;
+
+}
+
+function chatList(user) {
+    $(() => {
+        $('.chatList').append(
+            '<li user="'+user+'" onclick="openChat(\''+user+'\')">' +
+            '<div user="'+user+'" class="listContainer">' +
+            '<div user="'+user+'" class="desc">' +
+            '<h5 user="'+user+'">'+user+'</h5>' +
+            '</div>' +
+            '</div>' +
+            '</li>'
+        );
     })
 };
 
-let messageLeft = (data) => {
-    $(() => {
-        console.log(data);
-        $('.chat').append(
-            "<li class=\"msg-left\">" +
-            "<div class=\"msg-left-sub\">" +
-            "<div class=\"msg-desc\">" + data.message +
-            "</div>" +
-            "<small>"+(new Date(data.timestamp)).getHours()+":"+(new Date(data.timestamp)).getMinutes()+"</small>" +
-            "</div>" +
-            "</li>");
+function openChat(user) {
+	receiver = user;
 
-        scrollUpdate();
-    })
+	let md = document.getElementById('chatBox');
+	md.innerHTML = '';  //Limpa HTML
+
+	let userTitle = document.getElementById('current-user');
+	userTitle.innerText = receiver;
+
+	ws.send(JSON.stringify({
+		command: 'getMessages',
+		receiver,
+	}));
+	setTimeout(function(){scrollUpdate()},100);
 };
