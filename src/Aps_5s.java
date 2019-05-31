@@ -1,16 +1,18 @@
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
-
-import http.HttpRegisterHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import http.HttpRootHandler;
 import http.HttpAppHandler;
+import http.HttpRegisterHandler;
+import database.DatabaseConnection;
 
 public class Aps_5s {
 	public static void main(String[] args) throws Exception {
+		DatabaseConnection.dropCookies();
+
 		HttpServer httpServer = HttpServer.create(new InetSocketAddress(8000), 0);
 		httpServer.createContext("/", new HttpRootHandler());
 		httpServer.createContext("/app", new HttpAppHandler());

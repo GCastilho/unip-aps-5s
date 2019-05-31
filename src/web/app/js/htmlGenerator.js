@@ -1,41 +1,40 @@
 //função para gerar as mensagens e adicionar ao HTML
-function putMessage(data, newMessage = false) {
-	console.log(data);
-
+function putMessage(data, isNewMessage = false) {
 	let chatBox = document.getElementById('chatBox');
 
-	let dt = new Date((data.timestamp.$numberLong !== undefined) ? data.timestamp.$numberLong/1000 : data.timestamp);
+	let date = new Date((data.timestamp["$numberLong"] !== undefined) ? (data.timestamp["$numberLong"]/1000)-(1000*60*60*4) : data.timestamp);
 
-	console.log(data.timestamp.$numberLong);
-
-	let htm = '<div id="'+messageId+'" class="msg-left-sub">' +
-		'<div class="msg-desc">' + data.message + '</div>' +
+	let htm = '<div id="'+lastMessageId+'" class="msg-left-sub">' +
+		'<div class="msg-desc">' + data.message +
+		(data.fileExtension > 0 ? '<img src="'+ window.location +'/files/'+ lastMessageId + '">' : "") +
+		'</div>' +
 		'<small>' +
-		dt.getHours()+':'+String(dt.getMinutes()).padStart(2, '0') +
+		date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0') +
 		'</small>' +
 		'</div>' +
 		'</li>';
 
-	newMessage ?
-		chatBox.innerHTML += '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">' + htm:
+	if (isNewMessage) {
+		chatBox.innerHTML += '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">' + htm;
+	} else {
 		chatBox.innerHTML = '<li class="msg-' + (data.sender === me ? 'right' : 'left') + '">'
-		+ htm + chatBox.innerHTML;
-
+			+ htm + chatBox.innerHTML;
+	}
 }
 
-function chatList(user) {
+function chatList(name, isGroup = false) {
     $(() => {
         $('.chatList').append(
-            '<li user="'+user+'" onclick="openChat(\''+user+'\')">' +
-            '<div user="'+user+'" class="listContainer">' +
-            '<div user="'+user+'" class="desc">' +
-            '<h5 user="'+user+'">'+user+'</h5>' +
+            '<li user="'+name+'" onclick="openChat(\''+name+'\')">' +
+            '<div user="'+name+'" class="listContainer">' +
+            '<div user="'+name+'" class="desc">' +
+            '<h5 user="'+name+'">'+(isGroup ? name.slice(0, name.length-41) : name)+'</h5>' +
             '</div>' +
             '</div>' +
             '</li>'
         );
     })
-};
+}
 
 function openChat(user) {
 	receiver = user;
