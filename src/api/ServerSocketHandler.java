@@ -108,4 +108,18 @@ public class ServerSocketHandler {
 			clientSession.sendClient(message);
 		}
 	}
+
+	public static void sendAllOnline(String newUser) throws IOException {
+		JSONObject mail = new JSONObject();
+		mail.put("status", "ok");
+		mail.put("command", "newUser");
+		mail.put("user", newUser);
+		ServerSocketHandler.sockets.forEach((user, socket) -> {
+			try {
+				socket.sendClient(mail.toString());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		});
+	}
 }

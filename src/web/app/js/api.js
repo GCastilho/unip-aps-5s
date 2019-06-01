@@ -85,6 +85,10 @@ ws.onmessage = function(evt) {
 				});
 			});
 
+			command.set("newUser", () => {
+				chatList(data.user);
+			});
+
 			command.set('getMessages', () => {
 				data.messageList.forEach(message => {
 					lastMessageId = message._id.$oid;
