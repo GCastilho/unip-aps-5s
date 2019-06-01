@@ -78,7 +78,7 @@ ws.onmessage = function(evt) {
 
 			command.set('getChatList', () => {
 				data.groupsList.forEach(group => {
-					chatList(group, true)
+					chatList(group)
 				});
 				data.userList.forEach(user => {
 					if (user !== me) chatList(user)
