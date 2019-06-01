@@ -116,7 +116,7 @@ class Api {
 			}
 		});
 
-		commands.put("addNewGroup", () -> {
+		commands.put("newGroup", () -> {
 			try {
 				String group = data.getString("groupName");
 				JSONArray arrJson = data.getJSONArray("users");
@@ -126,7 +126,7 @@ class Api {
 				}
 
 				response.put("status", "ok");
-				response.put("command", "addNewGroup");
+				response.put("command", "newGroup");
 				response.put("group",group);
 				response.put("users",users);
 

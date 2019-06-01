@@ -53,7 +53,7 @@ window.onload = () => {
 	};
 
 	saveBtn.onclick = function() {
-		groupNameList = [];
+		groupNameList = [me];
 		groupName = document.getElementById("group-name");
 		var names = document.getElementsByName("user");
 		names.forEach(name => {
@@ -64,6 +64,11 @@ window.onload = () => {
 		});
 		console.log(groupName.value);
 		console.log(groupNameList);
+		ws.send(JSON.stringify({
+			command: 'newGroup',
+			groupName: groupName.value,
+			users: groupNameList
+		}));
 		groupName.value = '';
 		modal.style.display = "none";
 	};
@@ -140,6 +145,10 @@ ws.onmessage = function(evt) {
 			command.set('newMessage', () => {
 				putMessage(data, true);
 				scrollUpdate();
+			});
+
+			command.set('newGroup', () => {
+				console.log(data);
 			});
 
 			if (command.has(data.command)) {
