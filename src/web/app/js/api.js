@@ -21,18 +21,13 @@ window.onload = () => {
 			send();
 		}
 	});
-
-	$('#inputMessage').emojiPicker({
-		width: '100',
-		height: '250',
-		position: 'top',
-		fadeTime: 100,
-		iconColor: 'black',
-		iconBackgroundColor: '#fff',
-		recentCount: 36,
-		emojiSet: 'apple',
-		container: 'body',
-		button: true
+	$('#btnEmoji').lsxEmojiPicker({
+		width: 220,
+		height: 200,
+		twemoji: true,
+		onSelect: function(emoji){
+			document.getElementById("inputMessage").value += String.fromCodePoint(emoji.value.replace(/&#/i, '0'));
+		}
 	});
 };
 

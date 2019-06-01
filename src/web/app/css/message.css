@@ -234,7 +234,7 @@ body{
 .right-section-bottom input{
     border:0px;
     padding:8px 5px;
-    width:calc(100% - 150px);
+    width:calc(100% - 170px);
 }
 .right-section-bottom .btn-send{
     border:0px;
@@ -245,12 +245,6 @@ body{
     font-size: 18px;
     background: #fff;
     cursor: pointer;
-}
-.emojiPicker{
-    width: 280px !important;
-    height: 250px !important;
-    top: 255.359px !important;
-    left: 1263.531px !important;
 }
 .upload-btn{
     position: relative;
