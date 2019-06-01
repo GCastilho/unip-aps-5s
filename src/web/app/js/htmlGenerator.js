@@ -6,7 +6,7 @@ function putMessage(data, isNewMessage = false) {
 
 	let htm = '<div id="'+lastMessageId+'" class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message +
-		(data.fileExtension > 0 ? '<img src="'+ window.location +'/files/'+ lastMessageId + '">' : "") +
+		(data.fileExtension > 0 ? '<img src="'+window.location+'/files?'+lastMessageId+'&'+receiver+'">' : "") +
 		'</div>' +
 		'<small>' +
 		date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0') +
@@ -61,7 +61,7 @@ function upload_file() {
 
 	let dinput = document.createElement("input");
 	dinput.setAttribute("name","receiver");
-	dinput.setAttribute("value",receiver);
+	dinput.setAttribute("value", receiver);
 	form.appendChild(dinput);
 
 	dinput = document.createElement("input");

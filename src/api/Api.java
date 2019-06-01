@@ -56,7 +56,7 @@ class Api {
 				messageDoc.put("timestamp", data.get("timestamp"));
 				if(data.has("file")){
 					byte[] file = Base64.getDecoder().decode(data.getString("file"));
-					messageDoc.put("file", file);
+					messageDoc.put("file", data.getString("file"));
 					messageDoc.put("fileExtension", data.get("fileExtension"));
 				}
 

@@ -47,10 +47,10 @@ public class MongoConnection {
 					.sort(new BasicDBObject("_id", -1)).into(new ArrayList <>());
 		}
 	}
-	public static Document getFile (String objectID,String sender, String receiver) throws Exception {
+	public static Document getFile(String objectID,String sender, String receiver) throws Exception {
 		//retorna o arquivo que esta armazenado
 		//precisa receber sender e receiver para poder reconhecer em qual chat procurar
-		receiver = !DatabaseConnection.isGroup(receiver)? alfabeticalOrder(receiver,sender): receiver;
+		receiver = DatabaseConnection.isGroup(receiver) ? receiver : alfabeticalOrder(receiver,sender);
 		return database.getCollection(receiver)
 				.find(eq("_id",  new ObjectId(objectID)))
 				.projection((fields(include("file","fileExtension"), excludeId())))
