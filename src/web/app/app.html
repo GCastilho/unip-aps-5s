@@ -22,15 +22,17 @@
         <div class="head-section">
             <div class="headLeft-section">
                 <div class="headLeft-sub">
-                    <form action="/" method="get">
-                        <div class="headLeft-button">
+                    <div class="headLeft-button-left">
+                        <form action="/" method="get">
                             <button type="submit" id="log-out" class="btn"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                     <label>
                         <h3 id="current-session"></h3>
                     </label>
-                    <button id="option" class="btn" data-toggle="modal" data-target="#exampleModal"><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>
+                    <div class="headLeft-button-right">
+                        <button id="btn-add-group" class="btn" ><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>
+                    </div>
                 </div>
             </div>
             <div class="headRight-section">
@@ -58,6 +60,25 @@
                         <input id="inputMessage" type="text" name="inputMessage" placeholder="Digite aqui..." autofocus>
                     </label>
                     <button type="submit" class="btn-send"><i class="fa fa-send"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="new-group" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Novo grupo</h2>
+            </div>
+            <div class="modal-body">
+                <label>Nome do grupo: </label>
+                <input id="group-name" type="text" name="inputGruopName" placeholder="Digite aqui..." autofocus><br>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-buttons">
+                    <button id="cancel" class="btn" >Canceler</button>
+                    <button id="save" class="btn" >Criar</button>
                 </div>
             </div>
         </div>

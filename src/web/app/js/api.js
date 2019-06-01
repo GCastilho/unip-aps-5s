@@ -6,8 +6,22 @@ var me;
 
 var lastMessageId;
 
+var groupName;
+
+var groupNameList;
+
 window.onload = () => {
 	me = localStorage.getItem('username');
+
+	let modal = document.getElementById("new-group");
+
+	let btn = document.getElementById("btn-add-group");
+
+	let span = document.getElementsByClassName("close")[0];
+
+	let cancelBtn = document.getElementById("cancel");
+
+	let saveBtn = document.getElementById("save");
 
 	let user = document.getElementById('current-session');
 	user.innerText = 'Bem vindo, '+me+'!';
@@ -29,8 +43,41 @@ window.onload = () => {
 			document.getElementById("inputMessage").value += String.fromCodePoint(emoji.value.replace(/&#/i, '0'));
 		}
 	});
-};
 
+	btn.onclick = function() {
+		modal.style.display = "block";
+	};
+
+	cancelBtn.onclick = function() {
+		modal.style.display = "none";
+	};
+
+	saveBtn.onclick = function() {
+		groupNameList = [];
+		groupName = document.getElementById("group-name");
+		var names = document.getElementsByName("user");
+		names.forEach(name => {
+			if (name.checked === true) {
+				groupNameList.push(name.value);
+				name.checked = false;
+			}
+		});
+		console.log(groupName.value);
+		console.log(groupNameList);
+		groupName.value = '';
+		modal.style.display = "none";
+	};
+
+	span.onclick = function() {
+		modal.style.display = "none";
+	};
+
+	window.onclick = function(event) {
+		if (event.target === modal) {
+			modal.style.display = "none";
+		}
+	};
+};
 
 function send() {
 	let inputMessage = $('#inputMessage');
