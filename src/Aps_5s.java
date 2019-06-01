@@ -1,11 +1,14 @@
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;
-
-import http.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
+import http.HttpRootHandler;
+import http.HttpAppHandler;
+import http.HttpLibsHandler;
+import http.HttpFileHandler;
+import http.HttpRegisterHandler;
 import database.DatabaseConnection;
 
 public class Aps_5s {
@@ -16,7 +19,7 @@ public class Aps_5s {
 		httpServer.createContext("/", new HttpRootHandler());
 		httpServer.createContext("/app", new HttpAppHandler());
 		httpServer.createContext("/libs", new HttpLibsHandler());
-		httpServer.createContext("/files", new HttpFileHandler());
+		httpServer.createContext("/file", new HttpFileHandler());
 		httpServer.createContext("/register", new HttpRegisterHandler());
 		httpServer.setExecutor(null); // creates a default executor
 		httpServer.start();

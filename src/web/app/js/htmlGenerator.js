@@ -6,7 +6,7 @@ function putMessage(data, isNewMessage = false) {
 
 	let htm = '<div id="'+lastMessageId+'" class="msg-left-sub">' +
 		'<div class="msg-desc">' + data.message +
-		(data.fileExtension > 0 ? '<img src="'+window.location+'/files?'+lastMessageId+'&'+receiver+'">' : "") +
+		(data.fileExtension > 0 ? '<img src="'+window.location+'/file?'+lastMessageId+'&'+receiver+'">' : "") +
 		'</div>' +
 		'<small>' +
 		date.getHours() + ':' + String(date.getMinutes()).padStart(2, '0') +
@@ -52,23 +52,23 @@ function openChat(user) {
 	setTimeout(function(){scrollUpdate()},100);
 }
 
-function upload_file() {
-	let form = document.createElement("form");
-	form.setAttribute('method', 'POST');
-	form.setAttribute('enctype', "multipart/form-data");
-	form.setAttribute('target', "mf");
-	form.setAttribute('action', window.location + '../file');
+async function upload_file(e) {
+	let file = e.files[0];
 
-	let dinput = document.createElement("input");
-	dinput.setAttribute("name","receiver");
-	dinput.setAttribute("value", receiver);
-	form.appendChild(dinput);
+	let formData = new FormData();
+	let metadata = { receiver };
 
-	dinput = document.createElement("input");
-	dinput.setAttribute("name","file");
-	dinput.setAttribute("type","file");
-	form.appendChild(dinput);
-	dinput.click();
+	formData.append("file", file);
+	formData.append("metadata", JSON.stringify(metadata));
 
-	form.submit();
+
+	try {
+		let r = await fetch('/file', {
+			credentials: 'include',
+			method: 'POST',
+			body: formData});
+		console.log('HTTP response code:',r.status);
+	} catch(e) {
+		console.log('Huston we have problem...:', e);
+	}
 }

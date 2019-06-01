@@ -1,7 +1,13 @@
 package http;
 
-import java.util.Base64;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.io.OutputStream;
+
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -11,8 +17,14 @@ import database.MongoConnection;
 public class HttpFileHandler implements HttpHandler {
 	public void handle(HttpExchange httpExchange) {
 		try {
-			String sessionID = Http.getCookie("sessionID", httpExchange
-					.getRequestHeaders().get("Cookie"));
+			String sessionID;
+			try {
+				sessionID = Http.getCookie("sessionID", httpExchange
+						.getRequestHeaders().get("Cookie"));
+			} catch (NullPointerException ex) {
+				// NullPointerException irá ocorrer se não houver cookie no request
+				sessionID = null;
+			}
 			if (DatabaseConnection.validCookie(sessionID)) {
 				if (httpExchange.getRequestMethod().equals("GET")) {
 					String userID = DatabaseConnection.getUser(sessionID);
@@ -30,6 +42,8 @@ public class HttpFileHandler implements HttpHandler {
 					} else {
 						Http.send404(httpExchange);
 					}
+				} else if (httpExchange.getRequestMethod().equals("POST")) {
+					System.out.println("POST upload files not implemented");
 				}
 			} else {
 				Http.send401(httpExchange);
