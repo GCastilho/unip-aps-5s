@@ -110,7 +110,7 @@ ws.onopen = function() {
 };
 
 ws.onclose = function() {
-	alert("Closed!");
+	log_out();
 };
 
 ws.onerror = function(err) {
@@ -168,3 +168,8 @@ ws.onmessage = function(evt) {
 		console.log('Error while parsing input: ' + evt.data);
 	}
 };
+
+function log_out() {
+	document.cookie = 'sessionID=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+	window.location.pathname = '';
+}
