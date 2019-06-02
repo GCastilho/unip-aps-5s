@@ -64,11 +64,15 @@ window.onload = () => {
 		});
 		console.log(groupName.value);
 		console.log(groupNameList);
-		ws.send(JSON.stringify({
-			command: 'addNewGroup',
-			groupName: groupName.value,
-			users: groupNameList
-		}));
+		if (groupName.value !== '') {
+			ws.send(JSON.stringify({
+				command: 'addNewGroup',
+				groupName: groupName.value,
+				users: groupNameList
+			}));
+		} else {
+			alert('Digite o nome do grupo');
+		}
 		groupName.value = '';
 		modal.style.display = "none";
 	};
