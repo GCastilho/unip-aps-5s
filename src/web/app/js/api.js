@@ -65,7 +65,7 @@ window.onload = () => {
 		console.log(groupName.value);
 		console.log(groupNameList);
 		ws.send(JSON.stringify({
-			command: 'newGroup',
+			command: 'addNewGroup',
 			groupName: groupName.value,
 			users: groupNameList
 		}));
@@ -148,7 +148,7 @@ ws.onmessage = function(evt) {
 			});
 
 			command.set('newGroup', () => {
-				console.log(data);
+				chatList(data.groupID);
 			});
 
 			if (command.has(data.command)) {

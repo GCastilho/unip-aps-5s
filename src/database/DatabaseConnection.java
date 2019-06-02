@@ -189,17 +189,19 @@ public class DatabaseConnection {
 		}
 	}
 	//cria um grupo e adiciona todos os usuarios que foram enviados
-	public static void createGroup(String groupName, String[] userNames) throws Exception {
+	public static String createGroup(String groupName, List<String> userNames) throws Exception {
 		try {
+			String groupID = getSHA1(groupName+new Date().getTime());
 			PreparedStatement preparedStatement = getConnection().prepareStatement(
 					"insert into chatGroup (groupName, groupMember, groupID) values (?,?,?)"
 			);
 			preparedStatement.setString(1, groupName);
-			preparedStatement.setString(3, getSHA1(groupName+new Date().getTime()));
+			preparedStatement.setString(3, groupID);
 			for(String user : userNames){
 				preparedStatement.setString(2, user);
 				preparedStatement.execute();
 			}
+			return groupName + "-" + groupID;
 		} finally {
 			conn.close();
 		}
