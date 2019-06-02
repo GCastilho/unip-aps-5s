@@ -132,7 +132,10 @@ ws.onmessage = function(evt) {
 					chatList(group)
 				});
 				data.userList.forEach(user => {
-					if (user !== me) chatList(user)
+					if (user !== me) {
+						chatList(user);
+						modalUserList(user);
+					}
 				});
 			});
 

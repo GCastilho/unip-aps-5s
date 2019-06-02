@@ -33,8 +33,11 @@ function chatList(name) {
             '</div>' +
             '</li>'
         );
-        $('.modal-body').append('<input type="checkbox" name="user" value="'+name+'">'+name+'<br>');
     })
+}
+
+function modalUserList(name) {
+	$(() => {$('.modal-body').append('<input type="checkbox" name="user" value="'+name+'">'+name+'<br>')})
 }
 
 function openChat(user) {
