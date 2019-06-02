@@ -6,6 +6,9 @@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="https://twemoji.maxcdn.com/2/twemoji.min.js?12.0.4" crossorigin="anonymous"></script>
+    <link href="css/jquery.lsxemojipicker.css" rel="stylesheet">
+    <script src="js/jquery.lsxemojipicker.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="css/message.css">
@@ -19,14 +22,17 @@
         <div class="head-section">
             <div class="headLeft-section">
                 <div class="headLeft-sub">
-                    <form action="/" method="get">
+                    <div class="headLeft-button-left">
                         <div class="headLeft-button">
-                            <button type="submit" id="log-out" class="btn"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
+                            <button onclick="log_out()" type="submit" id="log-out" class="btn"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
                         </div>
-                    </form>
+                    </div>
                     <label>
                         <h3 id="current-session"></h3>
                     </label>
+                    <div class="headLeft-button-right">
+                        <button id="btn-add-group" class="btn" ><i class="fa fa-ellipsis-v" aria-hidden="true"></i></button>
+                    </div>
                 </div>
             </div>
             <div class="headRight-section">
@@ -48,12 +54,31 @@
                 <div class="right-section-bottom">
                     <div class="upload-btn">
                         <button class="btn" ><i class="fa fa-photo"></i></button>
-                        <input class="fa-paperclip" type="file" name="" />
+                        <button class="btn" id="btnEmoji" ><i class="fa fa-smile-o"></i></button>
                     </div>
                     <label>
-                        <input id="inputMessage" type="text" name="inputMessage" placeholder="type here..." autofocus>
+                        <input id="inputMessage" type="text" name="inputMessage" placeholder="Digite aqui..." autofocus>
                     </label>
                     <button type="submit" class="btn-send"><i class="fa fa-send"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="new-group" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Novo grupo</h2>
+            </div>
+            <div class="modal-body">
+                <label>Nome do grupo: </label>
+                <input id="group-name" type="text" name="inputGruopName" placeholder="Digite aqui..." autofocus required><br>
+            </div>
+            <div class="modal-footer">
+                <div class="modal-buttons">
+                    <button id="cancel" class="btn" >Canceler</button>
+                    <button id="save" class="btn" >Criar</button>
                 </div>
             </div>
         </div>

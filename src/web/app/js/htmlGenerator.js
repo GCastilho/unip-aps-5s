@@ -22,18 +22,22 @@ function putMessage(data, isNewMessage = false) {
 	}
 }
 
-function chatList(name, isGroup = false) {
+function chatList(name) {
     $(() => {
         $('.chatList').append(
             '<li user="'+name+'" onclick="openChat(\''+name+'\')">' +
             '<div user="'+name+'" class="listContainer">' +
             '<div user="'+name+'" class="desc">' +
-            '<h5 user="'+name+'">'+(isGroup ? name.slice(0, name.length-41) : name)+'</h5>' +
+            '<h5 user="'+name+'">'+(name.length > 20 ? name.slice(0, name.length-41) : name)+'</h5>' +
             '</div>' +
             '</div>' +
             '</li>'
         );
     })
+}
+
+function modalUserList(name) {
+	$(() => {$('.modal-body').append('<input type="checkbox" name="user" value="'+name+'">'+name+'<br>')})
 }
 
 function openChat(user) {
@@ -43,7 +47,7 @@ function openChat(user) {
 	md.innerHTML = '';  //Limpa HTML
 
 	let userTitle = document.getElementById('current-user');
-	userTitle.innerText = receiver;
+	userTitle.innerText = (receiver.length > 20 ? receiver.substr(0,receiver.length -41):receiver);
 
 	ws.send(JSON.stringify({
 		command: 'getMessages',

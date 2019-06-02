@@ -1,5 +1,6 @@
 package http;
 
+import api.ServerSocketHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import database.DatabaseConnection;
@@ -29,10 +30,13 @@ public class HttpRegisterHandler implements HttpHandler {
 					//se usuario existir
 					dsend.put("Status","Error");
 					dsend.put("message","Usuario ja existe");
-				}else{
+				} else {
 					//se tiver sucesso ao cadastrar
 					dsend.put("Status","ok");
 					dsend.put("message","Usuario Cadastrado");
+
+					// Envia o novo usuário aos usuário logados
+					ServerSocketHandler.sendAllOnline(userdata.getString("user"));
 				}
 
 				SendData(JSONObject.valueToString(dsend),httpExchange);

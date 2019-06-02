@@ -1,6 +1,7 @@
 body{
     font-family: 'Raleway', sans-serif;
     background-color: #ACCEDC;
+    resize: none;
     margin: 3% 3% 3% 3%;
 }
 .main-section small{
@@ -17,6 +18,7 @@ body{
     position: relative;
 }
 .head-section{
+    background: #F8F9F9;
     border-bottom:1px solid #E6E6E6;
     clear: both;
     overflow: hidden;
@@ -28,6 +30,7 @@ body{
     border-right:1px solid #E6E6E6;
 }
 .headLeft-sub{
+    background: #F8F9F9;
     padding: 15px;
     text-align: center;
 }
@@ -48,11 +51,11 @@ body{
     padding: 0;
     position: center;
 }
-.headLeft-button {
+.headLeft-button-left {
     float: left;
     position: relative;
 }
-.headLeft-button button{
+.headLeft-button-left button{
     position: center;
     border:0px;
     padding: 0px 0px;
@@ -61,10 +64,28 @@ body{
     margin-right: 0px;
     color: #009EF7;
     font-size: 18px;
-    background: #fff;
+    background: #F8F9F9;
+    cursor: pointer;
+}
+.headLeft-button-right {
+    float: right;
+    position: relative;
+    bottom: 20px;
+}
+.headLeft-button-right button{
+    position: center;
+    border:0px;
+    padding: 0px 0px;
+    float: right;
+    margin-left: 10px;
+    margin-right: 0px;
+    color: #009EF7;
+    font-size: 18px;
+    background: #F8F9F9;
     cursor: pointer;
 }
 .headRight-section{
+    background: #F8F9F9;
     width: 70%;
     float: left;
 }
@@ -230,7 +251,7 @@ body{
 .right-section-bottom input{
     border:0px;
     padding:8px 5px;
-    width:calc(100% - 150px);
+    width:calc(100% - 170px);
 }
 .right-section-bottom .btn-send{
     border:0px;
@@ -262,4 +283,94 @@ body{
     left: 0;
     top: 0;
     opacity: 0;
+}
+
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+
+/* Add Animation */
+@-webkit-keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+@keyframes animatetop {
+    from {top:-300px; opacity:0}
+    to {top:0; opacity:1}
+}
+
+/* The Close Button */
+.close {
+    color: white;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+.modal-content {
+    width: 50%;
+}
+.modal-header {
+    padding: 2px 16px;
+    align-content: center;
+    background-color: #c1c1c1;
+    color: black;
+}
+.modal-header h2{
+    position: center;
+}
+
+.modal-body {padding: 2px 16px;}
+
+.modal-footer {
+    padding: 4% 16px;
+    height: 20px;
+    background-color: #c1c1c1;
+    color: black;
+}
+.modal-buttons{
+    float: right;
+    margin: 0;
+    padding: 0;
+}
+.modal-buttons button{
+    border:0px;
+    padding: 8px 10px;
+    color: #fff;
+    font-size: 18px;
+    background: #009EF7;
+    cursor: pointer;
 }

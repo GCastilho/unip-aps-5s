@@ -6,8 +6,10 @@ import org.json.JSONArray;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import database.DatabaseConnection;
 import database.MongoConnection;
@@ -40,8 +42,8 @@ class Api {
 				if (DatabaseConnection.isGroup(receiver)) {
 					DatabaseConnection.getGroupUserList(receiver)
 							.forEach(user -> {
-								try{
-									ServerSocketHandler.send(user, mail.toString());
+								try {
+									if (!sender.equals(user)) ServerSocketHandler.send(user, mail.toString());
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
@@ -119,18 +121,24 @@ class Api {
 		commands.put("addNewGroup", () -> {
 			try {
 				String group = data.getString("groupName");
-				JSONArray arrJson = data.getJSONArray("users");
-				String[] users = new String[arrJson.length()];
-				for(int i = 0; i < arrJson.length(); i++) {
-					users[i] = arrJson.getString(i);
-				}
+				List<String> users = data.getJSONArray("users").toList().stream()
+						.map(object -> Objects.toString(object, null))
+						.collect(Collectors.toList());
+				String groupIP = DatabaseConnection.createGroup(group,users);
 
-				response.put("status", "ok");
-				response.put("command", "addNewGroup");
-				response.put("group",group);
-				response.put("users",users);
+				JSONObject mail = new JSONObject();
+				mail.put("status", "ok");
+				mail.put("command", "newGroup");
+				mail.put("groupID", groupIP);
 
-				DatabaseConnection.createGroup(group,users);
+				users.forEach(user -> {
+					try {
+						ServerSocketHandler.send(user, mail.toString());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				});
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				commands.get("internalServerError").run();
